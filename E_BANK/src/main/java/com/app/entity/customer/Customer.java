@@ -55,8 +55,4 @@ public class Customer extends BaseEntity {
 		private byte[] profilePhoto;
 	    @Column(nullable = false)
 	    private boolean status;
-	    
-	    
-	    
-
 }
