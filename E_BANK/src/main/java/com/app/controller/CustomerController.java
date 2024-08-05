@@ -22,7 +22,7 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
-
+ 
     @PostMapping
     public ResponseEntity<String> addCustomer(@Valid @RequestBody CustomerDTO customerDto) {
         if (customerDto.getFirstName() != null) {
