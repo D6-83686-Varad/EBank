@@ -36,7 +36,7 @@ public class LoginUser extends BaseEntity {
 	
 	@Column(length=30,nullable=false,unique = true)
 	private String username;
-	@Column(length=20,nullable=false)
+	@Column(length=64,nullable=false)
 	private String password;
 	@Column(length=50)
 	private String seqQuestion;
