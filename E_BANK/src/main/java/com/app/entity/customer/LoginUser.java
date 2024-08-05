@@ -48,9 +48,5 @@ public class LoginUser extends BaseEntity {
 	@OneToOne
 	@JoinColumn(name="acc_id")
 	private Account account;
-	
-	
-	
-	
 
 }
