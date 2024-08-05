@@ -45,7 +45,7 @@ public class Payment extends BaseEntity {
 	    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pay_seq")
 	    @GenericGenerator(
 	        name = "pay_seq", 
-	        strategy = "org.thoughts.on.java.generators.DatePrefixedSequenceIdGenerator", 
+	        strategy = "com.app.id.generator.DatePrefixedSequenceIdGenerator", 
 	        parameters = {@Parameter(name = DatePrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "50")})
 	@Column(name="ref_id")
 	private String refId;
