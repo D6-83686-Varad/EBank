@@ -3,9 +3,9 @@ package com.app.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.app.entity.account.Account;
+import com.app.entity.customer.LoginUser;
 
 @Repository
-public interface AccountDao extends JpaRepository<Account, String > {
+public interface LoginUserDao extends JpaRepository<LoginUser, Long> {
 
 }
