@@ -2,6 +2,7 @@ package com.app.controller;
 
 import java.util.List;
 
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,12 @@ import com.app.service.AccountTypeService;
 @Validated
 public class AccountTypeController {
 	
-	@Autowired(required=true)
+//	@Autowired
 	private AccountTypeService accService;
+//	
+//	@Autowired(required=true)
+//	private AccountTypeService accService;
+//	
 	
 	@GetMapping
 	public ResponseEntity<?> getAllAccountType()
