@@ -58,8 +58,6 @@ public class CustomerDTO {
     @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "PAN number must be valid")
     private String panNo;
 
-    private byte[] profilePhoto;
-
     @Builder.Default
     private boolean status = false;
 }

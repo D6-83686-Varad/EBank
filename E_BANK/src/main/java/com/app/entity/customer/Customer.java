@@ -51,8 +51,6 @@ public class Customer extends BaseEntity {
 	    private String adharNo;
 	    @Column(length=10)
 	    private String panNo;
-	    @Lob
-		private byte[] profilePhoto;
 	    @Column(nullable = false)
 	    private boolean status;
 }

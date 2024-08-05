@@ -46,17 +46,15 @@ public String updateCustomerEmailAndPhone(Long customerId, String newEmail, Stri
 }
 
 @Override
-public CustomerDTO getCustomer(Long customerId) {
+public Customer getCustomer(Long customerId) {
     Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
-    return mapper.map(customer, CustomerDTO.class);
+    return customer ;
 }
 @Override
-public List<CustomerDTO> getCustomersWithStatusFalse() {
+public List<Customer> getCustomersWithStatusFalse() {
     List<Customer> customers = customerDao.findByStatusFalse();
-    return customers.stream()
-                    .map(customer -> mapper.map(customer, CustomerDTO.class))
-                    .collect(Collectors.toList());
+    return customers.stream().collect(Collectors.toList());
 }
 @Override
 public String setCustomerStatusToTrue(Long customerId) {

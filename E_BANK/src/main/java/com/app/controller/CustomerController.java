@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.dto.CustomerDTO;
+import com.app.entity.customer.Customer;
 import com.app.service.CustomerService;
 
 import javax.validation.Valid;
@@ -49,15 +50,15 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long id) {
-        CustomerDTO customerDto = customerService.getCustomer(id);
-        return new ResponseEntity<>(customerDto, HttpStatus.OK);
+    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
+        Customer customer = customerService.getCustomer(id);
+        return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 
     @GetMapping("/status/false")
-    public ResponseEntity<List<CustomerDTO>> getCustomersWithStatusFalse() {
-        List<CustomerDTO> customersDto = customerService.getCustomersWithStatusFalse();
-        return new ResponseEntity<>(customersDto, HttpStatus.OK);
+    public ResponseEntity<List<Customer>> getCustomersWithStatusFalse() {
+        List<Customer> customers = customerService.getCustomersWithStatusFalse();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/status")

@@ -1,6 +1,8 @@
 package com.app.service;
 
 import com.app.dto.CustomerDTO;
+import com.app.entity.customer.Customer;
+
 import java.util.List;
 
 public interface CustomerService {
@@ -9,9 +11,9 @@ public interface CustomerService {
 
     String updateCustomerEmailAndPhone(Long customerId, String newEmail, String newPhoneNumber);
 
-    CustomerDTO getCustomer(Long customerId);
+    Customer getCustomer(Long customerId);
 
-    List<CustomerDTO> getCustomersWithStatusFalse();
+    List<Customer> getCustomersWithStatusFalse();
 
     String setCustomerStatusToTrue(Long customerId);
 }
