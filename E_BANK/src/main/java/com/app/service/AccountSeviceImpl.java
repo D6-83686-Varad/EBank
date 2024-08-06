@@ -33,10 +33,7 @@ public class AccountSeviceImpl implements AccountSevice{
 	
 	@Autowired
 	private CustomerDao customerDao;
-	@Autowired
-	private Account account;
-	@Autowired
-	private AccountType acctype;
+
 
 	@Override
 	public String addAccount(Customer customer, Bank bank, String accType) {
@@ -52,10 +49,7 @@ public class AccountSeviceImpl implements AccountSevice{
 		//customer.setRole(Role.ROLE_CUSTOMER);
 		accDao.save(account);
 		customerDao.save(customer);
-		//String accountNo,double balance,String accTypeId,long customerId
-		RegistrationMailSender reg =new RegistrationMailSender(customer.getEmail(),account.getAccountNo(),account.getBalance(),acctype.getAccTypeId(),customer.getCustomerId());
-		//MailSend mail =new MailSend();
-		MailSend.sendEmail(reg.getMessage(), reg.getSubject(), reg.getTo(), reg.getFrom());
+		
 	
 		
 		return "Succesfully Added";
