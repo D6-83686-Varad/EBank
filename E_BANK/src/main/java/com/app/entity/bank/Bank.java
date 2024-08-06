@@ -48,23 +48,17 @@ public class Bank {
 
 	//FUNDS
 	@Column
-	private double fundAvailable;
+	private double fundAvailable=0;
 	@Column
-	private double fundReceived;
+	private double fundReceived=0;
 	@Column
-	private double fundToPay;
+	private double fundToPay=0;
 	
 	//Loan
 	@Column
-	private double loanDisbursed;
+	private double loanDisbursed=0;
 	@Column
-	private double loanRecovered;
+	private double loanRecovered=0;
 	@Column
-	private double loanExpected;
-	
-	
-	
-	
-	
-	
+	private double loanExpected=0;
 }
