@@ -16,12 +16,12 @@ public class RegistrationMailSender {
 	String to="vighnesh.work@gmail.com";
 	String from="verifyuserdetails.001@gmail.com";
 	
-	public RegistrationMailSender(String mail)
+	public RegistrationMailSender(String mail,String accountNo,double balance,String accTypeId,long customerId)
 	{
-		String message="Dear Customer Your account is succefully created.";
+		String message="Dear Customer Your account is succefully created."+"accountno"+accountNo+"balance"+balance+"account ID"+accTypeId+"customer ID"+customerId;
 		String subject ="Bank: Verification";
 		String to=mail;
 		String from="verifyuserdetails.001@gmail.com";
 	}
-
+//accno,balance,acctype,customer_id
 }
