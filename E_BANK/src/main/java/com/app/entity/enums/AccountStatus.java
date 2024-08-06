@@ -1,5 +1,5 @@
 package com.app.entity.enums;
 
 public enum AccountStatus {
-	ACTIVATED,DEACTIVATED,PENDING
+	ACTIVATED,DEACTIVATED,SUSPENDED
 }
