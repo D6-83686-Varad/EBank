@@ -8,5 +8,7 @@ public interface BankService {
 	String addBank(BankDTO bank);
 	
 	Bank getBankDetails();
+	
+	
 
 }
