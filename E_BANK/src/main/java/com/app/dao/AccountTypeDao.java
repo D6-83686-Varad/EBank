@@ -10,4 +10,6 @@ import com.app.entity.account.AccountType;
 @Repository
 public interface AccountTypeDao extends JpaRepository<AccountType, String> {
 	Optional<AccountType> findByAccTypeName(String accType);
+
+	boolean existsByAccTypeName(String acc);
 }
