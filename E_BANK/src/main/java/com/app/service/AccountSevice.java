@@ -12,5 +12,9 @@ public interface AccountSevice {
 	Account addAccount(Customer customer, Bank bank, String accType);
 	
 	List<Account> getAllDeactivatedAccount();
+	
+	List<Account> getAllActivatedAccount();
+	
+	List<Account> getAllSuspendedAccount();
 
 }

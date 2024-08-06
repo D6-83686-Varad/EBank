@@ -68,4 +68,26 @@ public class AccountSeviceImpl implements AccountSevice{
 		return accList;
 	}
 
+
+	@Override
+	public List<Account> getAllActivatedAccount() {
+		List<Account> accList = accDao.getAllActivatedAccount();
+		if(accList.isEmpty())
+		{
+			throw new ResourceNotFoundException("There are no Deactivated Accounts");
+		}
+		return accList;
+	}
+
+
+	@Override
+	public List<Account> getAllSuspendedAccount() {
+		List<Account> accList = accDao.getAllSuspendedAccount();
+		if(accList.isEmpty())
+		{
+			throw new ResourceNotFoundException("There are no Deactivated Accounts");
+		}
+		return accList;
+	}
+
 }
