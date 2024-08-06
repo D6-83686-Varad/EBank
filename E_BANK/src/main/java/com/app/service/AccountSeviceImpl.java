@@ -36,7 +36,7 @@ public class AccountSeviceImpl implements AccountSevice{
 
 
 	@Override
-	public String addAccount(Customer customer, Bank bank, String accType) {
+	public Account addAccount(Customer customer, Bank bank, String accType) {
 		// TODO Auto-generated method stub
 		AccountType accTypes =accTyDao.findByAccTypeName(accType).orElseThrow(()->new ResourceNotFoundException("Hi"));
 		Account account =new Account();
@@ -47,12 +47,12 @@ public class AccountSeviceImpl implements AccountSevice{
 		accTypes.linkAccount(account);
 		customer.addAccountToCustomer(account);
 		//customer.setRole(Role.ROLE_CUSTOMER);
-		accDao.save(account);
+		Account accountCreated = accDao.save(account);
 		customerDao.save(customer);
 		
 	
 		
-		return "Succesfully Added";
+		return accountCreated;
 	}
 
 }
