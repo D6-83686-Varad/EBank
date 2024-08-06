@@ -102,6 +102,7 @@ public String createAdmin(Long customerId) {
     Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
     customer.setRole(Role.ROLE_ADMIN);
+    customer.setStatus(true);
     customerDao.save(customer);
     return "Admin created successfully..!";
 }

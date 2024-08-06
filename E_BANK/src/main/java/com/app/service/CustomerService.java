@@ -21,4 +21,6 @@ public interface CustomerService {
 
 	String createAdmin(Long id);
 
+	List<Customer> getAllCustomers();
+
 }

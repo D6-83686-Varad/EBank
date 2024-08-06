@@ -52,12 +52,18 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllCustomers")
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customers = customerService.getAllCustomers();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+    
+    
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomer(@PathVariable("id") Long id) {
         Customer customer = customerService.getCustomer(id);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
-
     @GetMapping("/status/false")
     public ResponseEntity<List<Customer>> getCustomersWithStatusFalse() {
         List<Customer> customers = customerService.getCustomersWithStatusFalse();
@@ -85,5 +91,7 @@ public class CustomerController {
         String msg = customerService.createAdmin(id);
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
+    
+    
 }
 
