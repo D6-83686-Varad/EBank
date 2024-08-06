@@ -1,6 +1,7 @@
 package com.app.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.text.DefaultEditorKit.CutAction;
@@ -18,6 +19,7 @@ import com.app.dto.CustomerDTO;
 import com.app.entity.account.AccountType;
 import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
+import com.app.entity.enums.Role;
 import com.app.exceptions.ResourceNotFoundException;
 
 
@@ -81,6 +83,27 @@ public String setCustomerStatusToTrue(Long customerId) {
 accSevice.addAccount(customer, bank, customer.getAccountType());
     customerDao.save(customer);
     return "Customer status updated to true!";
+}
+@Override
+public Customer login(String emailOrPhone, String password) {
+    Optional<Customer> customerOpt = customerDao.findByEmail(emailOrPhone);
+    if (!customerOpt.isPresent()) {
+        customerOpt = customerDao.findByPhoneNumber(emailOrPhone);
+    }
+    Customer customer = customerOpt.orElseThrow(() -> new ResourceNotFoundException("Invalid email/phone number or password"));
+    if (!customer.getPassword().equals(password)) {
+        throw new ResourceNotFoundException("Invalid email/phone number or password");
+    }
+    return customer;
+}
+
+@Override
+public String createAdmin(Long customerId) {
+    Customer customer = customerDao.findById(customerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+    customer.setRole(Role.ROLE_ADMIN);
+    customerDao.save(customer);
+    return "Admin created successfully..!";
 }
 
 }

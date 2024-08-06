@@ -16,4 +16,9 @@ public interface CustomerService {
     List<Customer> getCustomersWithStatusFalse();
 
     String setCustomerStatusToTrue(Long customerId);
+
+	Customer login(String emailOrPhone, String password);
+
+	String createAdmin(Long id);
+
 }

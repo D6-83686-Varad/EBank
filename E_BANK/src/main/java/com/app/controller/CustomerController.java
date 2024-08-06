@@ -7,7 +7,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.dto.CustomerDTO;
+import com.app.dto.LoginRequestDTO;
 import com.app.entity.customer.Customer;
+import com.app.entity.enums.Role;
+import com.app.exceptions.BadRequestException;
 import com.app.service.CustomerService;
 
 import javax.validation.Valid;
@@ -65,6 +68,22 @@ public class CustomerController {
     public ResponseEntity<String> setCustomerStatusToTrue(@PathVariable Long id) {
         String response = customerService.setCustomerStatusToTrue(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+        customerService.login(loginRequest.getEmailOrPhone(), loginRequest.getPassword());
+        return new ResponseEntity<>("Login successful!", HttpStatus.OK);
+    }
+    
+    @PutMapping("/updateRole/{id}")
+    public ResponseEntity<String> createAdmin(@PathVariable("id") Long id) {
+        Customer customer = customerService.getCustomer(id);
+        if (Role.ROLE_SUPER_ADMIN.equals(customer.getRole())) {
+            throw new BadRequestException("Cannot update role for a super admin");
+        }
+        String msg = customerService.createAdmin(id);
+        return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 }
 
