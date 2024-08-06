@@ -31,21 +31,5 @@ public class BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedOn; 
 
-    // Method to calculate difference in days
-    public long getDaysSinceLastUpdate() {
-        if (updatedOn != null) {
-            LocalDate today = LocalDate.now();
-            return ChronoUnit.DAYS.between(updatedOn.toLocalDate(), today);
-        }
-        return -1; // or throw an exception or handle the null case as needed
-    }
-
-    // Method to calculate difference in minutes
-    public long getMinutesSinceLastUpdate() {
-        if (updatedOn != null) {
-            LocalDateTime now = LocalDateTime.now();
-            return ChronoUnit.MINUTES.between(updatedOn, now);
-        }
-        return -1; // or throw an exception or handle the null case as needed
-    }
+   
 }
