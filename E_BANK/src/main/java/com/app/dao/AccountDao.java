@@ -7,5 +7,5 @@ import com.app.entity.account.Account;
 
 @Repository
 public interface AccountDao extends JpaRepository<Account, String > {
-
+	
 }
