@@ -18,8 +18,12 @@ public interface AccountSevice {
 	
 	List<Account> getAllSuspendedAccount();
 	
-	String changeStatusOfSuspendedAccount(AccountStatus status);
+	String changeStatusOfSuspendedAccount(String accId);
 	
-	String changeStatusOfDeactivatedAccount(AccountStatus status);
+	String changeStatusOfDeactivatedAccount(String accId);
+
+	
+
+	String changeStatusOfActivatedAccount(String accId);
 
 }

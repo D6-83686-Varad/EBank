@@ -1,5 +1,7 @@
 package com.app.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.servlet.Registration;
@@ -92,9 +94,21 @@ public class AccountSeviceImpl implements AccountSevice{
 
 
 	@Override
-	public String changeStatusOfSuspendedAccount(AccountStatus status) {
-		if(accDao.existByStatus(AccountStatus.SUSPENDED)) {
-			Account account = accDao.findByStatus(status).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
+	public String changeStatusOfSuspendedAccount(String accId) {
+		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
+		if(account.getStatus()==AccountStatus.SUSPENDED) {
+			
+			account.setStatus(AccountStatus.ACTIVATED);
+			accDao.save(account);
+			return "Updated account";
+		}
+		return "Failed to update";
+		
+	}
+	
+	public String changeStatusOfDeactivatedAccount(String accId) {
+		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
+		if(account.getStatus()==AccountStatus.DEACTIVATED) {
 			account.setStatus(AccountStatus.ACTIVATED);
 			accDao.save(account);
 			return "Updated account";
@@ -103,15 +117,20 @@ public class AccountSeviceImpl implements AccountSevice{
 		
 	}
 	
-	public String changeStatusOfDeactivatedAccount(AccountStatus status) {
-		if(accDao.existByStatus(AccountStatus.DEACTIVATED)) {
-			Account account = accDao.findByStatus(status).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
-			account.setStatus(AccountStatus.ACTIVATED);
+	@Override
+	public String changeStatusOfActivatedAccount(String accId) {
+		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
+		if(account.getStatus()==AccountStatus.ACTIVATED) {
+			
+			account.setStatus(AccountStatus.DEACTIVATED);
 			accDao.save(account);
 			return "Updated account";
 		}
-		return "Failed";
+		return "Failed to update";
 		
 	}
+	
+	
+	
 
 }
