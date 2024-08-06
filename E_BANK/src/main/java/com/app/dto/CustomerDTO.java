@@ -10,6 +10,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.app.entity.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +23,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 public class CustomerDTO {
 
     @NotBlank(message = "First name is required")
@@ -38,6 +40,9 @@ public class CustomerDTO {
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
+    
+    @NotBlank(message = "Password is mandatory")
+    private String password;
 
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "\\d{10}", message = "Phone number must be 10 digits")
@@ -57,7 +62,10 @@ public class CustomerDTO {
     @NotBlank(message = "PAN number is required")
     @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "PAN number must be valid")
     private String panNo;
+    
+    
+    private String accountType;
+    
+    
 
-    @Builder.Default
-    private boolean status = false;
 }

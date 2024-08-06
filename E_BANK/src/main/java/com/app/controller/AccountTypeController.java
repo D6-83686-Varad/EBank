@@ -23,7 +23,7 @@ import com.app.entity.account.AccountType;
 import com.app.service.AccountTypeService;
 
 @RestController
-@RequestMapping("accType")
+@RequestMapping("/accType")
 @Validated
 public class AccountTypeController {
 	
