@@ -2,6 +2,7 @@ package com.app.entity.base;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -22,11 +23,29 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class BaseEntity {
-	@Column(name="created_on")
-	@CreationTimestamp
-	private LocalDate createdOn;
-	@Column(name="updated_on")
-	@UpdateTimestamp
-	private LocalDateTime updatedOn; 
+    @Column(name="created_on")
+    @CreationTimestamp
+    private LocalDate createdOn;
 
+    @Column(name="updated_on")
+    @UpdateTimestamp
+    private LocalDateTime updatedOn; 
+
+    // Method to calculate difference in days
+    public long getDaysSinceLastUpdate() {
+        if (updatedOn != null) {
+            LocalDate today = LocalDate.now();
+            return ChronoUnit.DAYS.between(updatedOn.toLocalDate(), today);
+        }
+        return -1; // or throw an exception or handle the null case as needed
+    }
+
+    // Method to calculate difference in minutes
+    public long getMinutesSinceLastUpdate() {
+        if (updatedOn != null) {
+            LocalDateTime now = LocalDateTime.now();
+            return ChronoUnit.MINUTES.between(updatedOn, now);
+        }
+        return -1; // or throw an exception or handle the null case as needed
+    }
 }
