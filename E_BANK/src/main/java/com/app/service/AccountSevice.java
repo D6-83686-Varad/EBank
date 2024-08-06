@@ -6,6 +6,7 @@ import com.app.entity.account.Account;
 import com.app.entity.account.AccountType;
 import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
+import com.app.entity.enums.AccountStatus;
 
 public interface AccountSevice {
 	
@@ -16,5 +17,9 @@ public interface AccountSevice {
 	List<Account> getAllActivatedAccount();
 	
 	List<Account> getAllSuspendedAccount();
+	
+	String changeStatusOfSuspendedAccount(AccountStatus status);
+	
+	String changeStatusOfDeactivatedAccount(AccountStatus status);
 
 }
