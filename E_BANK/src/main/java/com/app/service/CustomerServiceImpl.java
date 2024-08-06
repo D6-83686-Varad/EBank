@@ -16,6 +16,7 @@ import com.app.dao.AccountTypeDao;
 import com.app.dao.BankDao;
 import com.app.dao.CustomerDao;
 import com.app.dto.CustomerDTO;
+import com.app.entity.account.Account;
 import com.app.entity.account.AccountType;
 import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
@@ -90,7 +91,7 @@ public String setCustomerStatusToTrue(Long customerId) {
     
     customer.setStatus(true);
     Bank bank = bankDao.getBankDetails().orElseThrow(()->new ResourceNotFoundException("Bank not found"));
-accSevice.addAccount(customer, bank, customer.getAccountType());
+    Account account =   accSevice.addAccount(customer, bank, customer.getAccountType());
     customerDao.save(customer);
     return "Customer status updated to true!";
 }
