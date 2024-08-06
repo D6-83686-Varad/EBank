@@ -24,6 +24,7 @@ import com.app.entity.enums.Gender;
 import com.app.entity.enums.Role;
 import com.app.entity.payment.TransactionHistory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -64,20 +65,22 @@ public class Customer extends BaseEntity {
 	    @Column(length=10)
 	    private String panNo;
 	    @Enumerated(EnumType.STRING)
-		private Role role;
+		private Role role=Role.ROLE_CUSTOMER;
 	    @Column(nullable = false)
 	    private boolean status=false;
 	    @Column(length=6)
 	    private String otp;
 	    @Column(nullable = false)
 	    private String accountType;
-	    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-		@JsonIgnore
-		private List<Account> accountList = new ArrayList<>();
+	    
+	    @OneToOne(mappedBy = "customer")
+	    @JsonManagedReference
+	    private Account account;
+
 	    
 	    public void addAccountToCustomer(Account account)
 	    {
-	    	this.accountList.add(account);
+	    	this.setAccount(account);
 	    	account.setCustomer(this);
 	    }
 }

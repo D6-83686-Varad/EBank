@@ -42,10 +42,10 @@ public class AccountSeviceImpl implements AccountSevice{
 		account.setBank(bank);
 		account.setCustomer(customer);
 		account.setStatus(AccountStatus.ACTIVATED);
-		accDao.save(account);
 		accTypes.linkAccount(account);
 		customer.addAccountToCustomer(account);
-		customer.setRole(Role.ROLE_CUSTOMER);
+		//customer.setRole(Role.ROLE_CUSTOMER);
+		accDao.save(account);
 		customerDao.save(customer);
 		
 		return "Succesfully Added";

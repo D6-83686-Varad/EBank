@@ -36,6 +36,7 @@ import com.app.entity.enums.AccountStatus;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -97,8 +98,9 @@ public class Account extends BaseEntity {
 	@JsonIgnore
 	private List<TransactionHistory> transactionHistories = new ArrayList<>();
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_id")
+	@OneToOne
+	@JsonBackReference
+	@JoinColumn(name="customer_id")
 	private Customer customer;
 	
 	
