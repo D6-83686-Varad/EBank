@@ -39,6 +39,7 @@ public class CustomerController {
             customerDto.setLastName(customerDto.getLastName().toUpperCase());
         }
         String response = customerService.addCustomer(customerDto);
+        //add
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -78,6 +79,7 @@ public class CustomerController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> setCustomerStatusToTrue(@PathVariable Long id) {
         String response = customerService.setCustomerStatusToTrue(id);
+        
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     

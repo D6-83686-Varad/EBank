@@ -50,8 +50,11 @@ public class AccountSeviceImpl implements AccountSevice{
 		Account accountCreated = accDao.save(account);
 		customerDao.save(customer);
 		
-	
-		
+		RegistrationMailSender reg =new RegistrationMailSender(customer.getEmail(),accountCreated.getAccountNo(),accountCreated.getBalance(),customer.getCustomerId());
+		//MailSend mail =new MailSend();
+		MailSend.sendEmail(reg.getMessage(), reg.getSubject(), reg.getTo(), reg.getFrom());
+
+
 		return accountCreated;
 	}
 
