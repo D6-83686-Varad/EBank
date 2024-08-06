@@ -16,52 +16,56 @@ import com.app.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
-public class AccountTypeSeviceImpl implements AccountSevice{
+public class AccountTypeSeviceImpl implements AccountTypeService{
 	
 	@Autowired
 	private AccountTypeDao accTypeDao;
 	
 	@Autowired
 	private ModelMapper mapper;
-	
-	//ADD ACCOUNT Type
-	
-	ApiResponse addAccountType(AccountTypeDTO accTypeDto)
-	{
-		AccountType accType = mapper.map(accTypeDto, AccountType.class);
-		if(accTypeDao.existsById(accType.getAccTypeId()))
-		{
-			return new ApiResponse("Already account Type is present");
-		}
-		accTypeDao.save(accType);
-		return new ApiResponse("Account Type added succesfully"); 
-	}
-	
-	//Get accountType
-		AccountTypeDTO getAccountType(String accType)
-		{
-			AccountType acctype= accTypeDao.findByAccTypeName(accType).orElseThrow(()->new ResourceNotFoundException("Invalid account Type"));
-			
-			return mapper.map(acctype, AccountTypeDTO.class);
-		}
-	
-	// Update accountType
+
+	@Override
+	public AccountTypeDTO getAccountType(String acc) {
+		// TODO Auto-generated method stub
+		AccountType accType=accTypeDao.findByAccTypeName(acc).orElseThrow(()->new ResourceNotFoundException("no such account type"));
 		
-		String updateAccountType(String accType,float interestRate)
-		{
-			AccountType acctype= accTypeDao.findByAccTypeName(accType).orElseThrow(()->new ResourceNotFoundException("Invalid account Type"));
-			acctype.setInterestRate(interestRate);
-			accTypeDao.save(acctype);
-			return "AccountType updated Succesully";
-		}
-	
-	
-	//Fetching all AccountType 
-	List<AccountType> getAllAccountType()
-	{
+		
+		return mapper.map(accType, AccountTypeDTO.class);
+	}
+
+	@Override
+	public List<AccountType> getAllAccountType() {
+		// TODO Auto-generated method stub
 		return accTypeDao.findAll();
 	}
+
+	@Override
+	public String updateAccountType(String acc, float interestRate) {
+		// TODO Auto-generated method stub
+		if(accTypeDao.existsByAccTypeName(acc))
+		{
+			AccountType accType=accTypeDao.findByAccTypeName(acc).orElseThrow(()->new ResourceNotFoundException("no such account type"));
+			accType.setInterestRate(interestRate);
+			accTypeDao.save(accType);
+			return "AccountType updated";
+			
+		}
+		
+		return "failed to update";
+
+		
+	}
+
+	@Override
+	public ApiResponse addAccType(AccountTypeDTO acc) {
+		// TODO Auto-generated method stub
+		AccountType accType =mapper.map(acc, AccountType.class);
+		accTypeDao.save(accType);
+		return new ApiResponse("Account added sucessfully");
+	}
 	
+	
+
 	
 	
 

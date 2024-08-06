@@ -27,7 +27,7 @@ import com.app.service.AccountTypeService;
 @Validated
 public class AccountTypeController {
 	
-//	@Autowired
+	@Autowired
 	private AccountTypeService accService;
 //	
 //	@Autowired(required=true)
@@ -53,7 +53,7 @@ public class AccountTypeController {
 	@PostMapping("/add")
 	public ResponseEntity<?> addAccountType(@RequestBody @Valid AccountTypeDTO accDTO)
 	{
-		return ResponseEntity.status(HttpStatus.CREATED).body(accService.addAccountType(accDTO));
+		return ResponseEntity.status(HttpStatus.CREATED).body(accService.addAccType(accDTO));
         
 	}
 	@PatchMapping("{accType}/update")

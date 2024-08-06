@@ -7,12 +7,10 @@ import com.app.dto.ApiResponse;
 import com.app.entity.account.AccountType;
 
 public interface AccountTypeService {
-    
-    ApiResponse addAccountType(AccountTypeDTO accTypeDto);
-    
-    AccountTypeDTO getAccountType(String accType);
-    
-    String updateAccountType(String accType, float interestRate);
-    
+
+    AccountTypeDTO getAccountType(String acc);
+
     List<AccountType> getAllAccountType();
+	String updateAccountType(String acc, float interestRate);
+	ApiResponse addAccType(AccountTypeDTO acc);
 }
