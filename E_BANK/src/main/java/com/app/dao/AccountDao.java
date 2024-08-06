@@ -22,5 +22,9 @@ public interface AccountDao extends JpaRepository<Account, String > {
 	List<Account>getAllActivatedAccount();
 	
 	Optional<Account>findByStatus(AccountStatus status);
+	
+	boolean existByStatus(AccountStatus status);
+
+	
 
 }

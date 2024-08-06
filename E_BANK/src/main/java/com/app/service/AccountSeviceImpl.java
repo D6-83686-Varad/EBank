@@ -90,4 +90,28 @@ public class AccountSeviceImpl implements AccountSevice{
 		return accList;
 	}
 
+
+	@Override
+	public String changeStatusOfSuspendedAccount(AccountStatus status) {
+		if(accDao.existByStatus(AccountStatus.SUSPENDED)) {
+			Account account = accDao.findByStatus(status).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
+			account.setStatus(AccountStatus.ACTIVATED);
+			accDao.save(account);
+			return "Updated account";
+		}
+		return "Failed";
+		
+	}
+	
+	public String changeStatusOfDeactivatedAccount(AccountStatus status) {
+		if(accDao.existByStatus(AccountStatus.DEACTIVATED)) {
+			Account account = accDao.findByStatus(status).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
+			account.setStatus(AccountStatus.ACTIVATED);
+			accDao.save(account);
+			return "Updated account";
+		}
+		return "Failed";
+		
+	}
+
 }
