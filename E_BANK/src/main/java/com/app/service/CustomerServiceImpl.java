@@ -10,8 +10,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.dao.AccountDao;
+import com.app.dao.AccountTypeDao;
+import com.app.dao.BankDao;
 import com.app.dao.CustomerDao;
 import com.app.dto.CustomerDTO;
+import com.app.entity.account.AccountType;
+import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
 import com.app.exceptions.ResourceNotFoundException;
 
@@ -24,6 +29,16 @@ public class CustomerServiceImpl implements CustomerService {
 private CustomerDao customerDao;
 @Autowired
 private ModelMapper mapper ;
+@Autowired
+private AccountDao accDao;
+
+@Autowired
+private BankDao bankDao;
+@Autowired
+private AccountTypeDao accTyDao;
+
+@Autowired 
+private AccountSevice accSevice;
 @Override
 public String addCustomer (CustomerDTO customerDto) {
 	Customer customer = mapper.map(customerDto, Customer.class) ;
@@ -62,6 +77,8 @@ public String setCustomerStatusToTrue(Long customerId) {
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
     
     customer.setStatus(true);
+    Bank bank = bankDao.getBankDetails().orElseThrow(()->new ResourceNotFoundException("Bank not found"));
+accSevice.addAccount(customer, bank, customer.getAccountType());
     customerDao.save(customer);
     return "Customer status updated to true!";
 }

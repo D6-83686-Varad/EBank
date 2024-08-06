@@ -31,7 +31,7 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import com.app.entity.bank.Bank;
 import com.app.entity.base.BaseEntity;
 import com.app.entity.customer.Customer;
-import com.app.entity.customer.LoginUser;
+
 import com.app.entity.enums.AccountStatus;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
@@ -67,21 +67,23 @@ public class Account extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private AccountStatus status;
 	@Column(name="balance")
-	private BigDecimal balance;
+	private double balance=0;
 
 	@Column
 	private boolean isDeleted=false;
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="Type_Fk_Id",nullable= false)
-	private AccountType accType;
+
 	
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bankId",nullable=false)
 	private Bank bank;
-	//nkoy
-//	@ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "bankCashflowId",nullable=false)
-//	private BankCashFlow bankcash;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "acc_typeId")
+	private AccountType accType;
+	
+	@Column(length=6)
+    private String otp;
+
 	
 	@OneToMany(mappedBy = "senderAccount", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
@@ -95,12 +97,15 @@ public class Account extends BaseEntity {
 	@JsonIgnore
 	private List<TransactionHistory> transactionHistories = new ArrayList<>();
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="customer_id",nullable= false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	@OneToOne(mappedBy = "account")
-	private LoginUser user;
+	
+	
+	
+//	@OneToOne(mappedBy = "account")
+//	private LoginUser user;
 	
 	
 //	public void deposit(BigDecimal amount,Account account)

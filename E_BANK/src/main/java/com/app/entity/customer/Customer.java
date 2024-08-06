@@ -1,7 +1,10 @@
 package com.app.entity.customer;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,11 +12,18 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.app.entity.account.Account;
 import com.app.entity.base.BaseEntity;
 import com.app.entity.enums.Gender;
+import com.app.entity.enums.Role;
+import com.app.entity.payment.TransactionHistory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,6 +53,8 @@ public class Customer extends BaseEntity {
 	    private String email;
 	    @Column(length=10,nullable = false, unique = true)
 	    private String phoneNumber;
+	    @Column(length=64,nullable=false)
+		private String password;
 	    @Column(nullable = false)
 	    private LocalDate dateOfBirth;
 	    @Enumerated(EnumType.STRING)
@@ -51,6 +63,21 @@ public class Customer extends BaseEntity {
 	    private String adharNo;
 	    @Column(length=10)
 	    private String panNo;
+	    @Enumerated(EnumType.STRING)
+		private Role role;
 	    @Column(nullable = false)
-	    private boolean status;
+	    private boolean status=false;
+	    @Column(length=6)
+	    private String otp;
+	    @Column(nullable = false)
+	    private String accountType;
+	    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+		@JsonIgnore
+		private List<Account> accountList = new ArrayList<>();
+	    
+	    public void addAccountToCustomer(Account account)
+	    {
+	    	this.accountList.add(account);
+	    	account.setCustomer(this);
+	    }
 }
