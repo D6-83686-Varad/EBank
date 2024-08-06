@@ -1,5 +1,7 @@
 package com.app.service;
 
+import java.util.List;
+
 import javax.servlet.Registration;
 import javax.transaction.Transactional;
 
@@ -53,6 +55,17 @@ public class AccountSeviceImpl implements AccountSevice{
 	
 		
 		return accountCreated;
+	}
+
+
+	@Override
+	public List<Account> getAllDeactivatedAccount() {
+		List<Account> accList = accDao.getAllDeactivatedAccount();
+		if(accList.isEmpty())
+		{
+			throw new ResourceNotFoundException("There are no Deactivated Accounts");
+		}
+		return accList;
 	}
 
 }
