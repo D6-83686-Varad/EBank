@@ -58,6 +58,11 @@ public class CustomerController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     
+    @GetMapping("/admins")
+    public ResponseEntity<List<Customer>> getAllAdmins() {
+        List<Customer> admins = customerService.getAllAdmins();
+        return new ResponseEntity<>(admins, HttpStatus.OK);
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomer(@PathVariable("id") Long id) {
@@ -82,7 +87,7 @@ public class CustomerController {
         return new ResponseEntity<>("Login successful!", HttpStatus.OK);
     }
     
-    @PutMapping("/updateRole/{id}")
+    @PutMapping("/updateAdmin/{id}")
     public ResponseEntity<String> createAdmin(@PathVariable("id") Long id) {
         Customer customer = customerService.getCustomer(id);
         if (Role.ROLE_SUPER_ADMIN.equals(customer.getRole())) {
@@ -92,6 +97,15 @@ public class CustomerController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
     
+    @PutMapping("/deleteAdmin/{id}")
+    public ResponseEntity<String> deleteAdmin(@PathVariable("id") Long id) {
+        Customer customer = customerService.getCustomer(id);
+        if (Role.ROLE_ADMIN.equals(customer.getRole())) {
+        	String msg = customerService.deleteAdmin(id);
+            return new ResponseEntity<>(msg, HttpStatus.OK);
+        }
+        throw new BadRequestException("Not Found");
+    }
     
 }
 

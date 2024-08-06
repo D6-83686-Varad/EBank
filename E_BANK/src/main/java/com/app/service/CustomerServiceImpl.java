@@ -74,6 +74,16 @@ public List<Customer> getCustomersWithStatusFalse() {
     return customers.stream().collect(Collectors.toList());
 }
 @Override
+public List<Customer> getAllAdmins() {
+    List<Customer> admins = customerDao.findByRole(Role.ROLE_ADMIN);
+    return admins.stream().collect(Collectors.toList());
+}
+@Override
+public List<Customer> getAllCustomers() {
+    List<Customer> customers = customerDao.findAll();
+    return customers.stream().collect(Collectors.toList());
+}
+@Override
 public String setCustomerStatusToTrue(Long customerId) {
     Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
@@ -107,4 +117,14 @@ public String createAdmin(Long customerId) {
     return "Admin created successfully..!";
 }
 
+
+
+@Override
+public String deleteAdmin(Long customerId) {
+    Customer customer = customerDao.findById(customerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+    customer.setRole(Role.ROLE_DISABLED);
+    customerDao.save(customer);
+    return "Admin disabled successfully..!";
+}
 }

@@ -23,4 +23,8 @@ public interface CustomerService {
 
 	List<Customer> getAllCustomers();
 
+	String deleteAdmin(Long customerId);
+
+	List<Customer> getAllAdmins();
+
 }
