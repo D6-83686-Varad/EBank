@@ -1,5 +1,6 @@
 package com.app.service;
 
+import javax.servlet.Registration;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import com.app.entity.customer.Customer;
 import com.app.entity.enums.AccountStatus;
 import com.app.entity.enums.Role;
 import com.app.exceptions.ResourceNotFoundException;
+import com.app.miscellaneous.mail.MailSend;
+import com.app.miscellaneous.mail.RegistrationMailSender;
 
 @Service
 @Transactional
@@ -47,6 +50,10 @@ public class AccountSeviceImpl implements AccountSevice{
 		//customer.setRole(Role.ROLE_CUSTOMER);
 		accDao.save(account);
 		customerDao.save(customer);
+		RegistrationMailSender reg =new RegistrationMailSender(customer.getEmail());
+		//MailSend mail =new MailSend();
+		MailSend.sendEmail(reg.getMessage(), reg.getSubject(), reg.getTo(), reg.getFrom());
+	
 		
 		return "Succesfully Added";
 	}
