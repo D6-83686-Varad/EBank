@@ -28,7 +28,7 @@ public class MailSend
 //        sendEmail(message,subject,to,from);
 //    }
 
-	public static void sendEmail(String message, String subject, String to, String from) {
+	public static void sendEmail(String message, String subject, String to) {
 	//variableforgmailhost
 		String host="smtp.gmail.com";
 		
@@ -57,7 +57,7 @@ public class MailSend
 	MimeMessage mymessage=new MimeMessage(session);
 	//from email
 	try {
-		mymessage.setFrom(from);
+		mymessage.setFrom("verifyuserdetails.001@gmail.com");
 		//add reciepent to message
 		mymessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 		
