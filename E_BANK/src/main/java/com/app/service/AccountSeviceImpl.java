@@ -255,4 +255,26 @@ public class AccountSeviceImpl implements AccountSevice {
         
         return true;
     }
+    
+    //loan
+    /**
+     * Adds a new account to the system.
+     * This method saves the provided Account entity to the database using the AccountDao.
+     *
+     * @param acc The Account entity to be added. It should contain all necessary details for account creation.
+     * @return The saved Account entity, which may include generated values or additional information from the database.
+     */
+	@Override
+	public Account addAccount(Account acc) {
+		
+        // Save the account entity using the DAO and return the saved entity
+		return accountDao.save(acc);
+	}
+
+	@Override
+	public Account getAccountDetails(String accId) {
+		// TODO Auto-generated method stub
+		Account acc = accountDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Given account id is not found"));
+		return acc;
+	}
 }

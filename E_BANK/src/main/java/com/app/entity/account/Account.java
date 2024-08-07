@@ -37,8 +37,10 @@ import com.app.entity.enums.TransType;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
+import com.app.loan.entities.Request;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -105,9 +107,29 @@ public class Account extends BaseEntity {
 	@JoinColumn(name="customer_id")
 	private Customer customer;
 	
+	//Loan
+	/**
+     * List of requests associated with the account.
+     * The list is managed by the account entity, with cascading and orphan removal enabled.
+     */
+	@JsonManagedReference
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Request>request = new ArrayList<>();
 	
 	
+	/**
+     * Adds a request to the account.
+     * Also sets the account reference on the request.
+     * 
+     * @param request The request to be added.
+     */
+	//helper method
+	public void addRequest(Request request) {
+		this.request.add(request);
+		request.setAccount(this);
+	}
 	
+	//Loan End
 
 	
 	

@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.loan.entities.Account;
-import com.app.loan.service.AccountService;
+import com.app.entity.account.Account;
+import com.app.service.AccountSevice;
 
 @RestController
 @RequestMapping("/loan/account")
 public class LoanAccountController {
 	@Autowired
-	private AccountService accService;
+	private AccountSevice accService;
 	
 	/**
      * End-point to add a new account.

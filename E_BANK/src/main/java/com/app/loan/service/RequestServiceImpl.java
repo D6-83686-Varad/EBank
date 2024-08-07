@@ -12,14 +12,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.app.loan.dao.AccountDao;
+import com.app.dao.AccountDao;
+import com.app.entity.account.Account;
 import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dao.LoanDetailsDao;
 import com.app.loan.dao.LoanPaymentDao;
 import com.app.loan.dao.RequestDao;
 import com.app.loan.dto.RequestDto;
-import com.app.loan.entities.Account;
+
 import com.app.loan.entities.Collateral;
 import com.app.loan.entities.Loan;
 import com.app.loan.entities.LoanDetails;
@@ -60,6 +61,7 @@ public class RequestServiceImpl implements RequestService{
 	public ApiResponse addRequest(RequestDto reqDto) {
 		
         // Retrieve the account and loan details based on provided IDs
+
 		Account account = accDao.findById(reqDto.getAccountId()).orElseThrow(()-> new ResourceNotFoundException("Invalid Account Id"));
 		LoanDetails loanDetails = loanDetailsDao.findById(reqDto.getLoanType()).orElseThrow(()-> new ResourceNotFoundException("Invalid Loan details Id"));
 
