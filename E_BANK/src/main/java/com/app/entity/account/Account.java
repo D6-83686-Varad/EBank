@@ -54,6 +54,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString(callSuper = true)
 public class Account extends BaseEntity {
+
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "acc_seq")
@@ -147,12 +148,13 @@ public class Account extends BaseEntity {
 		
 	}
 
-	public void addTransaction(Payment payment, TransactionHistory senderTransHistory, PaymentDTO pay) {
+	public void addTransaction(Payment payment, TransactionHistory senderTransHistory, PaymentDTO pay, String transStatus) {
 		senderTransHistory.setDescription(pay.getDescription());
 		senderTransHistory.setTransactionType(TransType.DEBIT);
 		senderTransHistory.setAmount(pay.getAmount());
 		senderTransHistory.setBalance(this.getBalance());
-		senderTransHistory.setStatus("Success");
+		senderTransHistory.setStatus(transStatus);
+		senderTransHistory.setReceiverAccountNo(pay.getReceiverAccountNo());;
 		this.getTransactionHistories().add(senderTransHistory);
 		senderTransHistory.setAccount(this);
 		payment.getTransactionHistories().add(senderTransHistory);

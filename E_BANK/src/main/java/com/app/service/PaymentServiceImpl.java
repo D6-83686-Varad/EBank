@@ -49,7 +49,8 @@ public class PaymentServiceImpl implements PaymentService {
 
 	        // Map PaymentDTO to Payment entity
 	        Payment payment = mapper.map(payments, Payment.class);
-
+	        payment.setReciverAccountNo(payments.getReceiverAccountNo());
+	        
 	        // Retrieve sender and receiver accounts
 	        Account senderAccount = accDao.findById(payments.getSenderAccountNo())
 	            .orElseThrow(() -> new ResourceNotFoundException("Invalid sender account"));
@@ -85,11 +86,12 @@ public class PaymentServiceImpl implements PaymentService {
 	        
 	        //Transaction History for sender
 	        TransactionHistory senderTransactionHistory = new TransactionHistory();
-	        senderAccount.addTransaction(payment, senderTransactionHistory, payments);
+	        senderAccount.addTransaction(payment, senderTransactionHistory, payments,"SUCCESS");
 	      //Transaction History for receiver
 	        TransactionHistory receiverTransactionHistory = new TransactionHistory();
-	        receiverAccount.addTransaction(payment, receiverTransactionHistory, payments);
+	        receiverAccount.addTransaction(payment, receiverTransactionHistory, payments,"SUCCESS");
 	        receiverTransactionHistory.setTransactionType(TransType.CREDIT);
+	        receiverTransactionHistory.setReceiverAccountNo(payments.getSenderAccountNo());
 	        
 	        
 	        
@@ -120,11 +122,14 @@ public class PaymentServiceImpl implements PaymentService {
 	@Override
 	public boolean paymentOutsideBank(PaymentDTO payments) throws BadRequestException {
 	    try {
+	    	String receiverAccNo = payments.getReceiverAccountNo();
 	        // Retrieve bank details
 	        Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Invalid bank details"));
 	        // Map PaymentDTO to Payment entity
 	        Payment payment = mapper.map(payments, Payment.class);
-
+	        
+	        payment.setReciverAccountNo(receiverAccNo);
+	        
 	        // Retrieve sender account
 	        Account senderAccount = accDao.findById(payments.getSenderAccountNo())
 	            .orElseThrow(() -> new ResourceNotFoundException("Invalid sender account"));
@@ -156,7 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
 	        
 	      //Transaction History for sender
 	        TransactionHistory senderTransactionHistory = new TransactionHistory();
-	        senderAccount.addTransaction(payment, senderTransactionHistory, payments);
+	        senderAccount.addTransaction(payment, senderTransactionHistory, payments,"PENDING");
 
 	        // Interact with the external bank to deposit the amount
 
@@ -169,6 +174,15 @@ public class PaymentServiceImpl implements PaymentService {
 	        // Save updated sender account
 	        accDao.save(senderAccount);
 	        transDao.save(senderTransactionHistory);
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
 	        return true;
 
 	    } catch (Exception e) {

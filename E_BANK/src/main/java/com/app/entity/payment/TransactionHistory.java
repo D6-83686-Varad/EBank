@@ -1,6 +1,7 @@
 package com.app.entity.payment;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,8 +51,7 @@ public class TransactionHistory  {
 	private String transactionId;
 	@Enumerated(EnumType.STRING)
 	private TransType transactionType;
-	@Column(name="transaction_mode",length=10)
-	private String transactionMode;
+	
 	@Column(name="amount",nullable = false)
 	private double amount;
 	@Column(name="status",nullable = false)
@@ -61,8 +61,10 @@ public class TransactionHistory  {
 	@Column(name="balance",nullable = false)
 	private double balance;
 	@Column(name="created_on")
-	@CreationTimestamp
-	private LocalDate createdOn;
+	 @CreationTimestamp
+	 private LocalDateTime createdOn;
+	
+	private String receiverAccountNo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")

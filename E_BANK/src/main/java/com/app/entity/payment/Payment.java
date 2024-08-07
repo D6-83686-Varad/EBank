@@ -18,8 +18,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 import com.app.entity.account.Account;
@@ -40,7 +42,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Payment extends BaseEntity {
+public class Payment {
 	 @Id
 	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pay_seq")
 	    @GenericGenerator(
@@ -53,8 +55,14 @@ public class Payment extends BaseEntity {
 	@Column(name="ref_id")
 	private String refId;
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receive_acc_No")
+    @JoinColumn(name = "receive_acc_No_In")
 	private Account receicerAccount;
+	
+	 @Column(name="created_on")
+	 @CreationTimestamp
+	 private LocalDateTime createdOn;
+	@Column(name="receive_acc_No")
+	private String reciverAccountNo;
 	
 	private String IFSCCode="JWT_00001";
 	
