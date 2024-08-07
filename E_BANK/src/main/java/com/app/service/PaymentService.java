@@ -8,7 +8,7 @@ public interface PaymentService {
 	
 
 	boolean paymentWithinBank(PaymentDTO payments) throws BadRequestException;
-	String paymentOutsideBank(PaymentDTO payments);
+	boolean paymentOutsideBank(PaymentDTO payments) throws BadRequestException;
 	String paymentEMI(PaymentDTO payments);
 	String paymentLoan(PaymentDTO payments);
 }

@@ -24,7 +24,7 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 import com.app.entity.account.Account;
 import com.app.entity.base.BaseEntity;
-import com.app.id.generator.DatePrefixedSequenceIdGenerator;
+
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
 
 import lombok.AllArgsConstructor;
@@ -42,11 +42,14 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class Payment extends BaseEntity {
 	 @Id
-	    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pay_seq")
+	 @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pay_seq")
 	    @GenericGenerator(
-	        name = "pay_seq", 
-	        strategy = "com.app.id.generator.DatePrefixedSequenceIdGenerator", 
-	        parameters = {@Parameter(name = DatePrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "50")})
+	            name = "pay_seq", 
+	            strategy = "com.app.id.generator.StringPrefixedSequenceIdGenerator", 
+	            parameters = {
+	                @Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "1"),
+	                @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "PID"),
+	                @Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%08d") })
 	@Column(name="ref_id")
 	private String refId;
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -56,7 +59,7 @@ public class Payment extends BaseEntity {
 	private String IFSCCode="JWT_00001";
 	
 	@Column
-	private boolean status=false;
+	private boolean status=true;
 	@Column(name="amount")
 	private double amount;
 	

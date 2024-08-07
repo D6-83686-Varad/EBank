@@ -129,10 +129,20 @@ public class Account extends BaseEntity {
     }
 
 	public void addPayment(Payment payment, Account receiverAccount) {
+		
 		this.getPaymentsMade().add(payment);
 		payment.setSenderAccount(this);
 		receiverAccount.getPaymentsReceive().add(payment);
 		payment.setReceicerAccount(receiverAccount);
+		
+		
+	}
+	public void addPayment(Payment payment) {
+		
+		this.getPaymentsMade().add(payment);
+		payment.setSenderAccount(this);
+		
+		
 		
 	}
 

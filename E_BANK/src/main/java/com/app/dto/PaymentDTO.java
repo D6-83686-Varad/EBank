@@ -39,9 +39,9 @@ public class PaymentDTO {
     @Size(max = 255, message = "Description must not exceed 255 characters")
     private String description;
 
-    @NotBlank(message = "Status of payment is mandatory")
-    //@Pattern(regexp = "Pending|Completed|Failed", message = "Status of payment must be one of: Pending, Completed, Failed")
-    private String statusOfPayment;
+//    @NotBlank(message = "Status of payment is mandatory")
+//    //@Pattern(regexp = "Pending|Completed|Failed", message = "Status of payment must be one of: Pending, Completed, Failed")
+//    private String statusOfPayment;
 
     @NotNull(message = "Transaction type is mandatory")
     private TransType type;

@@ -3,6 +3,7 @@ package com.app.service;
 import javax.transaction.Transactional;
 
 import org.apache.coyote.BadRequestException;
+import org.hibernate.internal.build.AllowSysOut;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,63 +38,126 @@ public class PaymentServiceImpl implements PaymentService {
 	
 	@Override
 	public boolean paymentWithinBank(PaymentDTO payments) throws BadRequestException {
-	    // Retrieve bank details
-	    Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Invalid bank details"));
-	    payments.setIFSCCode(bank.getBankBranchId());
+	    try {
+	        // Retrieve bank details
+	        Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Invalid bank details"));
+	        payments.setIFSCCode(bank.getBankBranchId());
+	        System.out.println("Retrieved bank details successfully");
 
-	    // Map PaymentDTO to Payment entity
-	    Payment payment = mapper.map(payments, Payment.class);
+	        // Map PaymentDTO to Payment entity
+	        Payment payment = mapper.map(payments, Payment.class);
 
-	    // Retrieve sender and receiver accounts
-	    Account senderAccount = accDao.findById(payments.getSenderAccountNo())
-	        .orElseThrow(() -> new ResourceNotFoundException("Invalid sender account"));
-	    Account receiverAccount = accDao.findById(payments.getReceiverAccountNo())
-	        .orElseThrow(() -> new ResourceNotFoundException("Invalid receiver account"));
+	        // Retrieve sender and receiver accounts
+	        Account senderAccount = accDao.findById(payments.getSenderAccountNo())
+	            .orElseThrow(() -> new ResourceNotFoundException("Invalid sender account"));
+	        Account receiverAccount = accDao.findById(payments.getReceiverAccountNo())
+	            .orElseThrow(() -> new ResourceNotFoundException("Invalid receiver account"));
+	        System.out.println("Retrieved sender and receiver accounts successfully");
 
-	    // Validate account statuses
-	    if (senderAccount.getStatus() == AccountStatus.SUSPENDED || senderAccount.getStatus() == AccountStatus.DEACTIVATED 
-	        || receiverAccount.getStatus() == AccountStatus.DEACTIVATED) {
-	        throw new BadRequestException("Invalid Request: One or both accounts are deactivated or suspended");
+	        // Validate account statuses
+	        if (senderAccount.getStatus() == AccountStatus.SUSPENDED || senderAccount.getStatus() == AccountStatus.DEACTIVATED
+	            || receiverAccount.getStatus() == AccountStatus.DEACTIVATED) {
+	            throw new BadRequestException("Invalid Request: One or both accounts are deactivated or suspended");
+	        }
+
+	        double amount = payments.getAmount();
+
+	        // Check sender's balance
+	        if (senderAccount.getBalance() < amount) {
+	            throw new BadRequestException("Insufficient Funds");
+	        }
+
+	        // Apply fee if the payment amount exceeds the limit
+	        if (amount > 200000) {
+	            double fee = amount * 0.0005;
+	            senderAccount.withdraw(fee);
+	            bank.addFundAvailable(fee);
+	            bankDao.save(bank);
+	            System.out.println("Fee applied and bank updated successfully");
+	        }
+
+	        // Perform the transfer
+	        senderAccount.withdraw(amount);
+	        receiverAccount.deposit(amount);
+
+	        // Save payment details
+	        senderAccount.addPayment(payment, receiverAccount);
+	        payDao.save(payment);
+
+	        // Save updated accounts
+	        accDao.save(senderAccount);
+	        accDao.save(receiverAccount);
+
+	        System.out.println("Payment processed and accounts updated successfully");
+	        return true;
+
+	    } catch (Exception e) {
+	        // Log the exception and throw a custom error if needed
+	        e.printStackTrace();
+	        throw new RuntimeException("An error occurred while processing the payment", e);
 	    }
-
-	    double amount = payments.getAmount();
-
-	    // Check sender's balance
-	    if (senderAccount.getBalance() < amount) {
-	        throw new BadRequestException("Insufficient Funds");
-	    }
-
-	    // Apply fee if the payment amount exceeds the limit
-	    if (amount > 200000) {
-	        double fee = amount * 0.0005;
-	        senderAccount.withdraw(fee);
-	        bank.addFundAvailable(fee);
-	        bankDao.save(bank);
-	    }
-
-	    // Perform the transfer
-	    senderAccount.withdraw(amount);
-	    receiverAccount.deposit(amount);
-
-	    // Save payment details
-	    senderAccount.addPayment(payment, receiverAccount);
-	    payDao.save(payment);
-
-	    // Save updated accounts
-	    accDao.save(senderAccount);
-	    accDao.save(receiverAccount);
-
-	    return true;
 	}
 
 
 
 
 	@Override
-	public String paymentOutsideBank(PaymentDTO payments) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean paymentOutsideBank(PaymentDTO payments) throws BadRequestException {
+	    try {
+	        // Retrieve bank details
+	        Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Invalid bank details"));
+	        // Map PaymentDTO to Payment entity
+	        Payment payment = mapper.map(payments, Payment.class);
+
+	        // Retrieve sender account
+	        Account senderAccount = accDao.findById(payments.getSenderAccountNo())
+	            .orElseThrow(() -> new ResourceNotFoundException("Invalid sender account"));
+
+	        // Validate sender account status
+	        if (senderAccount.getStatus() == AccountStatus.SUSPENDED || senderAccount.getStatus() == AccountStatus.DEACTIVATED) {
+	            throw new BadRequestException("Invalid Request: Sender account is deactivated or suspended");
+	        }
+
+	        double amount = payments.getAmount();
+
+	        // Check sender's balance
+	        if (senderAccount.getBalance() < amount) {
+	            throw new BadRequestException("Insufficient Funds");
+	        }
+
+	        // Apply fee if the payment amount exceeds the limit
+	        if (amount > 200000) {
+	            double fee = amount * 0.0005;
+	            senderAccount.withdraw(fee);
+	            bank.addFundAvailable(fee);
+	        }
+
+	        // Perform the transfer within the bank
+	        senderAccount.withdraw(amount);
+	        bank.addFundToPay(amount);
+	        bank.addFundAvailable(amount);
+	        payment.setStatus(false);
+
+	        // Interact with the external bank to deposit the amount
+
+
+	        // Save payment details
+	        senderAccount.addPayment(payment); // External bank, no receiver account within our system
+	        payDao.save(payment);
+	        // Save bank details
+	        bankDao.save(bank);
+	        // Save updated sender account
+	        accDao.save(senderAccount);
+
+	        return true;
+
+	    } catch (Exception e) {
+	        // Log the exception and throw a custom error if needed
+	        e.printStackTrace();
+	        throw new RuntimeException("An error occurred while processing the payment", e);
+	    }
 	}
+
 
 
 
