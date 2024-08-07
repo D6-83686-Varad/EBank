@@ -27,12 +27,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
-
+import com.app.dto.PaymentDTO;
 import com.app.entity.bank.Bank;
 import com.app.entity.base.BaseEntity;
 import com.app.entity.customer.Customer;
 
 import com.app.entity.enums.AccountStatus;
+import com.app.entity.enums.TransType;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
@@ -146,28 +147,22 @@ public class Account extends BaseEntity {
 		
 	}
 
-//	public void addTransactionHistory(PaymentDTO pay, TransactionHistory senderTransHistory, Payment payment) {
-//		// TODO Auto-generated method stub
-//		senderTransHistory.setDescription(pay.getDescription());
-//		senderTransHistory.setTransactionType("Debit");
-//		senderTransHistory.setAmount(pay.getAmount());
-//		//System.out.println(senderAccount.getBalance());
-//		senderTransHistory.setBalance(this.getBalance()-senderTransHistory.getAmount());
-//		//System.out.println(senderAccount.getBalance()+"--------");
-//		senderTransHistory.setStatus("Success");
-//		senderTransHistory.setTransactionMode(pay.getTransactionMode());
-//		this.getTransactionHistories().add(senderTransHistory);
-//		senderTransHistory.setAccount(this);
-//		payment.getTransactionHistories().add(senderTransHistory);
-//		senderTransHistory.setPayment(payment);
-//	}
-//	
-//	public void addPayment(Payment payment) {
-//		this.getPaymentsMade().add(payment);
-//		payment.setSenderAccount(this);
-//		
-//		
-//	}
+	public void addTransaction(Payment payment, TransactionHistory senderTransHistory, PaymentDTO pay) {
+		senderTransHistory.setDescription(pay.getDescription());
+		senderTransHistory.setTransactionType(TransType.DEBIT);
+		senderTransHistory.setAmount(pay.getAmount());
+		senderTransHistory.setBalance(this.getBalance());
+		senderTransHistory.setStatus("Success");
+		this.getTransactionHistories().add(senderTransHistory);
+		senderTransHistory.setAccount(this);
+		payment.getTransactionHistories().add(senderTransHistory);
+		senderTransHistory.setPayment(payment);
+		
+	}
+
+
+
+
 
 
 

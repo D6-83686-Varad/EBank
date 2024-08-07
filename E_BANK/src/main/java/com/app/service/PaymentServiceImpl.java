@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 import com.app.dao.AccountDao;
 import com.app.dao.BankDao;
 import com.app.dao.PaymentDao;
+import com.app.dao.TransactionHistoryDao;
 import com.app.dto.PaymentDTO;
 import com.app.entity.account.Account;
 import com.app.entity.bank.Bank;
 import com.app.entity.enums.AccountStatus;
 import com.app.entity.enums.TransType;
 import com.app.entity.payment.Payment;
+import com.app.entity.payment.TransactionHistory;
 import com.app.exceptions.ResourceNotFoundException;
 @Service
 @Transactional
@@ -28,7 +30,8 @@ public class PaymentServiceImpl implements PaymentService {
 	private BankDao bankDao;
 	@Autowired
 	private AccountDao accDao;
-	
+	@Autowired
+	private TransactionHistoryDao transDao;
 	
 	@Autowired
 	private ModelMapper mapper;
@@ -79,11 +82,24 @@ public class PaymentServiceImpl implements PaymentService {
 	        // Perform the transfer
 	        senderAccount.withdraw(amount);
 	        receiverAccount.deposit(amount);
-
+	        
+	        //Transaction History for sender
+	        TransactionHistory senderTransactionHistory = new TransactionHistory();
+	        senderAccount.addTransaction(payment, senderTransactionHistory, payments);
+	      //Transaction History for receiver
+	        TransactionHistory receiverTransactionHistory = new TransactionHistory();
+	        receiverAccount.addTransaction(payment, receiverTransactionHistory, payments);
+	        receiverTransactionHistory.setTransactionType(TransType.CREDIT);
+	        
+	        
+	        
+	        
+	        
 	        // Save payment details
 	        senderAccount.addPayment(payment, receiverAccount);
 	        payDao.save(payment);
-
+	        transDao.save(senderTransactionHistory);
+	        transDao.save(receiverTransactionHistory);
 	        // Save updated accounts
 	        accDao.save(senderAccount);
 	        accDao.save(receiverAccount);
@@ -137,6 +153,10 @@ public class PaymentServiceImpl implements PaymentService {
 	        bank.addFundToPay(amount);
 	        bank.addFundAvailable(amount);
 	        payment.setStatus(false);
+	        
+	      //Transaction History for sender
+	        TransactionHistory senderTransactionHistory = new TransactionHistory();
+	        senderAccount.addTransaction(payment, senderTransactionHistory, payments);
 
 	        // Interact with the external bank to deposit the amount
 
@@ -148,7 +168,7 @@ public class PaymentServiceImpl implements PaymentService {
 	        bankDao.save(bank);
 	        // Save updated sender account
 	        accDao.save(senderAccount);
-
+	        transDao.save(senderTransactionHistory);
 	        return true;
 
 	    } catch (Exception e) {
