@@ -3,6 +3,8 @@ package com.app.dto;
 import java.time.LocalDate;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -63,9 +65,13 @@ public class CustomerDTO {
     @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "PAN number must be valid")
     private String panNo;
     
+    @NotNull(message = "TOTP cannot be null")
+    @Min(value = 100000, message = "TOTP must be at least 6 digits")
+    @Max(value = 999999, message = "TOTP must be at most 6 digits")
+    private int TOTP;
     
+    @NotBlank
     private String accountType;
     
     
-
 }

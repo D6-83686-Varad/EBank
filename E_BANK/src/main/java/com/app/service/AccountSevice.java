@@ -22,8 +22,6 @@ public interface AccountSevice {
 	
 	String changeStatusOfDeactivatedAccount(String accId);
 
-	
-
 	String changeStatusOfActivatedAccount(String accId);
 
 	void depositToAccount(String accountId, double amount);

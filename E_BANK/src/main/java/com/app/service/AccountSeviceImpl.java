@@ -37,6 +37,7 @@ public class AccountSeviceImpl implements AccountSevice{
 	
 	@Autowired
 	private CustomerDao customerDao;
+	
 
 
 	@Override
@@ -113,8 +114,10 @@ public class AccountSeviceImpl implements AccountSevice{
 	    }
 	@Override
 	public double checkBalance(String accountId) {
+		
         Account account = accDao.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+       
         
         return account.getBalance();
     }
@@ -175,9 +178,7 @@ public class AccountSeviceImpl implements AccountSevice{
 	public boolean checkAccountSuspension(Account account) {
 		LocalDateTime updatedOn = account.getUpdatedOn();
         LocalDateTime now = LocalDateTime.now();
-        
         long daysBetween = ChronoUnit.DAYS.between(updatedOn, now);
-        //TODO change the time , 1 day just for checking
         if (daysBetween > 180) {
             account.setStatus(AccountStatus.SUSPENDED);
             accDao.save(account);

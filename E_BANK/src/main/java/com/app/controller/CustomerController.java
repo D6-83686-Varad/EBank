@@ -11,10 +11,13 @@ import com.app.dto.LoginRequestDTO;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.Role;
 import com.app.exceptions.BadRequestException;
+import com.app.exceptions.ResourceNotFoundException;
 import com.app.service.CustomerService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 import java.util.List;
@@ -105,6 +108,17 @@ public class CustomerController {
             return new ResponseEntity<>(msg, HttpStatus.OK);
         }
         throw new BadRequestException("Not Found");
+    }
+    @PostMapping("/{customerId}/update-tpin")
+    public ResponseEntity<String> updateTpin(@PathVariable Long customerId, @RequestParam @Min(100000) @Max(999999) int newTpin) {
+        try {
+            customerService.updateCustomerTpin(customerId, newTpin);
+            return new ResponseEntity<>("TPIN updated successfully", HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
     
 }

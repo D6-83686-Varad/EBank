@@ -23,7 +23,7 @@ public interface AccountDao extends JpaRepository<Account, String > {
 	
 	Optional<Account>findByStatus(AccountStatus status);
 	
-	boolean existByStatus(AccountStatus status);
+	
 
 	
 

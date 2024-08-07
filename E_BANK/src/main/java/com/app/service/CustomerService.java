@@ -27,4 +27,8 @@ public interface CustomerService {
 
 	List<Customer> getAllAdmins();
 
+	void verifyCustomerTpin(Long customerId, int inputTpin);
+
+	void updateCustomerTpin(Long customerId, int newTpin);
+
 }

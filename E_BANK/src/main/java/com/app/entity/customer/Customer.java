@@ -73,6 +73,9 @@ public class Customer extends BaseEntity {
 	    @Column(nullable = false)
 	    private String accountType;
 	    
+	    @Column(length=6,nullable =false)
+		private int TOTP;
+	    
 	    @OneToOne(mappedBy = "customer")
 	    @JsonManagedReference
 	    private Account account;
@@ -82,5 +85,9 @@ public class Customer extends BaseEntity {
 	    {
 	    	this.setAccount(account);
 	    	account.setCustomer(this);
+	    }
+	    
+	    public boolean verifyTpin(int givenTpin) {
+	        return this.TOTP == givenTpin;
 	    }
 }

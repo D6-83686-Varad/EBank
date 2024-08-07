@@ -21,6 +21,7 @@ import com.app.entity.account.AccountType;
 import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.Role;
+import com.app.exceptions.InvalidTpinException;
 import com.app.exceptions.ResourceNotFoundException;
 
 
@@ -137,5 +138,28 @@ public String deleteAdmin(Long customerId) {
     customer.setRole(Role.ROLE_DISABLED);
     customerDao.save(customer);
     return "Admin disabled successfully..!";
+}
+
+@Override
+public void verifyCustomerTpin(Long customerId, int inputTpin) {
+    Customer customer = customerDao.findById(customerId)
+        .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+    
+    Account account = customer.getAccount();
+    if (account == null) {
+        throw new ResourceNotFoundException("Account not found for the customer");
+    }
+
+    if (!account.getCustomer().verifyTpin(inputTpin)) {
+        throw new InvalidTpinException("Invalid TPIN provided");
+    }
+}
+@Override
+public void updateCustomerTpin(Long customerId, int newTpin) {
+    Customer customer = customerDao.findById(customerId)
+        .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+    
+    customer.setTOTP(newTpin);
+    customerDao.save(customer);
 }
 }

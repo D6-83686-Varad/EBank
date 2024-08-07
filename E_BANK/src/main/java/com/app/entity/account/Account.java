@@ -72,7 +72,7 @@ public class Account extends BaseEntity {
 
 	@Column
 	private boolean isDeleted=false;
-
+	
 	
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bankId",nullable=false)
@@ -83,7 +83,7 @@ public class Account extends BaseEntity {
 	private AccountType accType;
 	
 	@Column(length=6)
-    private String otp;
+    private String OTP;
 
 	
 	@OneToMany(mappedBy = "senderAccount", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -106,28 +106,23 @@ public class Account extends BaseEntity {
 	
 	
 	
-//	@OneToOne(mappedBy = "account")
-//	private LoginUser user;
+
 	
 	
-//	public void deposit(BigDecimal amount,Account account)
-//	{
-//		this.balance = this.getBalance()- amount;
-//		account.balance =account.getBalance()+ amount;
-//	}
-//
-//
-//
-//	public void addPayment(Payment payment, Account receiverAccount) {
-//		this.getPaymentsMade().add(payment);
-//		payment.setSenderAccount(this);
-//		receiverAccount.getPaymentsReceive().add(payment);
-//		payment.setReceicerAccount(receiverAccount);
-//		
-//	}
-//
-//
-//
+	public void deposit(double amount,Account account)
+	{
+		this.balance = this.getBalance()- amount;
+		account.balance =account.getBalance()+ amount;
+	}
+
+	public void addPayment(Payment payment, Account receiverAccount) {
+		this.getPaymentsMade().add(payment);
+		payment.setSenderAccount(this);
+		receiverAccount.getPaymentsReceive().add(payment);
+		payment.setReceicerAccount(receiverAccount);
+		
+	}
+
 //	public void addTransactionHistory(PaymentDTO pay, TransactionHistory senderTransHistory, Payment payment) {
 //		// TODO Auto-generated method stub
 //		senderTransHistory.setDescription(pay.getDescription());
