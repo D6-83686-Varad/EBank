@@ -26,4 +26,12 @@ public interface AccountSevice {
 
 	String changeStatusOfActivatedAccount(String accId);
 
+	void depositToAccount(String accountId, double amount);
+
+	void withdrawFromAccount(String accountId, double amount);
+
+	double checkBalance(String accountId);
+
+	boolean checkAccountSuspension(Account account);
+
 }

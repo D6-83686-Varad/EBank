@@ -102,9 +102,19 @@ public Customer login(String emailOrPhone, String password) {
         customerOpt = customerDao.findByPhoneNumber(emailOrPhone);
     }
     Customer customer = customerOpt.orElseThrow(() -> new ResourceNotFoundException("Invalid email/phone number or password"));
+
     if (!customer.getPassword().equals(password)) {
         throw new ResourceNotFoundException("Invalid email/phone number or password");
     }
+    
+    Account account = customer.getAccount();
+    if (account != null) {
+        boolean isAccountActive = accSevice.checkAccountSuspension(account);
+        if (!isAccountActive) {
+            throw new ResourceNotFoundException("Account is suspended due to inactivity.");
+        }
+    }
+
     return customer;
 }
 

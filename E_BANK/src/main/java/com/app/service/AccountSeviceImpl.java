@@ -69,6 +69,7 @@ public class AccountSeviceImpl implements AccountSevice{
 		}
 		return accList;
 	}
+	
 
 
 	@Override
@@ -80,8 +81,44 @@ public class AccountSeviceImpl implements AccountSevice{
 		}
 		return accList;
 	}
-
-
+	@Override
+	 public void depositToAccount(String accountId, double amount) {
+	        if (amount <= 0) {
+	            throw new IllegalArgumentException("Deposit amount must be positive.");
+	        }
+	        
+	        Account account = accDao.findById(accountId)
+	                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+	        
+	        double newBalance = account.getBalance() + amount;
+	        account.setBalance(newBalance);
+	        accDao.save(account);
+	    }
+	@Override
+	    public void withdrawFromAccount(String accountId, double amount) {
+	        if (amount <= 0) {
+	            throw new IllegalArgumentException("Withdrawal amount must be positive.");
+	        }
+	        
+	        Account account = accDao.findById(accountId)
+	                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+	        
+	        if (account.getBalance() < amount) {
+	            throw new IllegalArgumentException("Insufficient balance.");
+	        }
+	        
+	        double newBalance = account.getBalance() - amount;
+	        account.setBalance(newBalance);
+	        accDao.save(account);
+	    }
+	@Override
+	public double checkBalance(String accountId) {
+        Account account = accDao.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+        
+        return account.getBalance();
+    }
+	
 	@Override
 	public List<Account> getAllSuspendedAccount() {
 		List<Account> accList = accDao.getAllSuspendedAccount();
@@ -91,6 +128,8 @@ public class AccountSeviceImpl implements AccountSevice{
 		}
 		return accList;
 	}
+	
+	
 
 
 	@Override
@@ -105,7 +144,7 @@ public class AccountSeviceImpl implements AccountSevice{
 		return "Failed to update";
 		
 	}
-	
+	@Override
 	public String changeStatusOfDeactivatedAccount(String accId) {
 		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
 		if(account.getStatus()==AccountStatus.DEACTIVATED) {
@@ -116,6 +155,7 @@ public class AccountSeviceImpl implements AccountSevice{
 		return "Failed";
 		
 	}
+
 	
 	@Override
 	public String changeStatusOfActivatedAccount(String accId) {
@@ -129,8 +169,21 @@ public class AccountSeviceImpl implements AccountSevice{
 		return "Failed to update";
 		
 	}
-	
-	
-	
 
+
+	@Override
+	public boolean checkAccountSuspension(Account account) {
+		LocalDateTime updatedOn = account.getUpdatedOn();
+        LocalDateTime now = LocalDateTime.now();
+        
+        long daysBetween = ChronoUnit.DAYS.between(updatedOn, now);
+        //TODO change the time , 1 day just for checking
+        if (daysBetween > 180) {
+            account.setStatus(AccountStatus.SUSPENDED);
+            accDao.save(account);
+            return false;
+        }
+        
+        return true;
+	}
 }
