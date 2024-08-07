@@ -19,6 +19,8 @@ import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.AccountStatus;
 import com.app.exceptions.ResourceNotFoundException;
+import com.app.miscellaneous.mail.MailSend;
+import com.app.miscellaneous.mail.RegistrationMailSender;
 
 @Service
 @Transactional
@@ -60,6 +62,10 @@ public class AccountSeviceImpl implements AccountSevice {
         Account createdAccount = accountDao.save(account);
         customerDao.save(customer);
         
+        RegistrationMailSender reg =new RegistrationMailSender(customer.getEmail(),createdAccount.getAccountNo(),createdAccount.getBalance(),customer.getCustomerId(), accountType.getAccTypeName(),bank.getBankName());
+		//MailSend mail =new MailSend();
+		
+		MailSend.sendEmail(reg.getMessage(), reg.getSubject(), reg.getTo());
         return createdAccount;
     }
 
