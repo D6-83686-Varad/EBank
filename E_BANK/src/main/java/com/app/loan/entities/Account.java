@@ -2,15 +2,11 @@ package com.app.loan.entities;
 
 import java.util.ArrayList;
 
-
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +17,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.app.loan.idGenerator.StringPrefixedSequenceIdGenerator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
@@ -30,10 +25,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
 
+/**
+ * Represents an account entity in the system.
+ * Each account has a unique identifier, a balance, and can have multiple associated requests.
+ */
 @Entity
 @Table(name = "account")
 @Getter
@@ -42,6 +38,11 @@ import lombok.Singular;
 @NoArgsConstructor
 @ToString(callSuper = true)
 public class Account {
+	
+	
+	/**
+     * Unique identifier for the account, generated using a custom sequence.
+     */
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "acc_seq")
     @GenericGenerator(
@@ -54,13 +55,29 @@ public class Account {
 	@Column(name="account_no")
 	private String accountNo;
 	
+	
+	/**
+     * Current balance of the account.
+     */
 	@Column(name="balance")
 	private int balance;
 	
+	
+	/**
+     * List of requests associated with the account.
+     * The list is managed by the account entity, with cascading and orphan removal enabled.
+     */
 	@JsonManagedReference
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Request>request = new ArrayList<>();
 	
+	
+	/**
+     * Adds a request to the account.
+     * Also sets the account reference on the request.
+     * 
+     * @param request The request to be added.
+     */
 	//helper method
 	public void addRequest(Request request) {
 		this.request.add(request);

@@ -1,15 +1,14 @@
 package com.app.loan.service;
 
 import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Optional;
-import com.app.loan.exceptions.ResourceNotFoundException;
 
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import com.app.loan.dao.AccountDao;
@@ -25,7 +24,8 @@ import com.app.loan.entities.LoanDetails;
 import com.app.loan.entities.Request;
 import com.app.loan.entities.Status;
 import com.app.loan.dto.ApiResponse;
-import com.app.loan.dto.CollateralDto;
+import com.app.loan.exceptions.ResourceNotFoundException;
+
 
 @Service
 @Transactional
@@ -51,10 +51,12 @@ public class RequestServiceImpl implements RequestService{
 
 	@Override
 	public ApiResponse addRequest(RequestDto reqDto) {
-		System.out.println("In Service");
+		
+        // Retrieve the account and loan details based on provided IDs
 		Account account = accDao.findById(reqDto.getAccountId()).orElseThrow(()-> new ResourceNotFoundException("Invalid Account Id"));
 		LoanDetails loanDetails = loanDetailsDao.findById(reqDto.getLoanType()).orElseThrow(()-> new ResourceNotFoundException("Invalid Loan details Id"));
-		System.out.println("in account");
+
+        // Map RequestDto to Request entity and associate with account and loan details
 		Request req = mapper.map(reqDto, Request.class);
 		account.addRequest(req);
 		loanDetails.addRequestLoanType(req);
@@ -71,7 +73,6 @@ public class RequestServiceImpl implements RequestService{
 	@Override
 	public List<Request> viewRequested() {
 		// TODO Auto-generated method stub
-		System.out.println("Hii ok");
 		return reqDao.findAllByStatusWithRequested();
 	}
 
@@ -105,29 +106,24 @@ public class RequestServiceImpl implements RequestService{
 	@Override
 	public String updateToApproved(String requestId) {
 		// TODO Auto-generated method stub
-		System.out.println("ok");
 		Optional<Request> optionalEntity = reqDao.findById(requestId);
-//		System.out.println(optionalEntity.toString());
-		System.out.println("Hii");
+
         if (optionalEntity.isPresent()) {
         	
-        	System.out.println("hiii");
             Request entity = optionalEntity.get();
             if(entity.getStatus()  == Status.P) {
-            	System.out.println("okkkkkkk");
-//              System.out.println(entity.getLoanAmount());
+            	
             	entity.setStatus(Status.A);
-            	Request savedRequest = entity;
             	reqDao.save(entity);
-            	System.out.println(entity.getRequestId());
-            	System.out.println("CO");
+            	
+                // Retrieve collateral, account, and loan details
             	Collateral collateral = collateralDao.findByRequest(entity);
-              	System.out.println("Acc");
-//              entity.getAccount().getAccountNo()
               	Account account = accDao.findById(entity.getAccount().getAccountNo()).orElseThrow(()-> new ResourceNotFoundException("Account Not found with given request id"));
-              	System.out.println("Loan");
               	LoanDetails loanDetails = loanDetailsDao.findById(entity.getDetails().getLoanName()).orElseThrow(()-> new ResourceNotFoundException("Loan details Found "));
-              	Loan loan = new Loan(account, entity.getLoanAmount(), (entity.getLoanAmount()/entity.getLoanDuration()), LocalDate.now(), LocalDate.now().plusMonths(entity.getLoanDuration()), loanDetails, collateral );
+              	
+                // Calculate interest and create a new loan
+              	float interest = entity.getLoanAmount()*entity.getLoanDuration()*(entity.getDetails().getInterestRate()/100);
+              	Loan loan = new Loan(account, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), LocalDate.now(), LocalDate.now().plusMonths(entity.getLoanDuration()), loanDetails, collateral );
               	loanDao.save(loan);
               	return "Succeed";
             }else {
