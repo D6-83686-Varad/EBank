@@ -2,6 +2,7 @@ package com.app.loan.service;
 
 import java.time.LocalDate;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,14 +16,17 @@ import com.app.loan.dao.AccountDao;
 import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dao.LoanDetailsDao;
+import com.app.loan.dao.LoanPaymentDao;
 import com.app.loan.dao.RequestDao;
 import com.app.loan.dto.RequestDto;
 import com.app.loan.entities.Account;
 import com.app.loan.entities.Collateral;
 import com.app.loan.entities.Loan;
 import com.app.loan.entities.LoanDetails;
+import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.Request;
 import com.app.loan.entities.Status;
+import com.app.loan.entities.TransactionStatus;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.exceptions.ResourceNotFoundException;
 
@@ -48,6 +52,9 @@ public class RequestServiceImpl implements RequestService{
 	
 	@Autowired
 	private LoanDetailsDao loanDetailsDao;
+	
+	@Autowired
+	private LoanPaymentDao loanPaymentDao;
 
 	@Override
 	public ApiResponse addRequest(RequestDto reqDto) {
@@ -124,8 +131,12 @@ public class RequestServiceImpl implements RequestService{
                 // Calculate interest and create a new loan
               	float interest = entity.getLoanAmount()*entity.getLoanDuration()*(entity.getDetails().getInterestRate()/100);
               	Loan loan = new Loan(account, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), LocalDate.now(), LocalDate.now().plusMonths(entity.getLoanDuration()), loanDetails, collateral );
-              	loanDao.save(loan);
-              	return "Succeed";
+              	Loan forLoanId = loanDao.save(loan);
+              	forLoanId.addLoanPayment(new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT));
+//              	System.out.println(forLoanId.getLoanNo());
+//              	LoanPayment loanPayment =new LoanPayment(forLoanId, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), TransactionStatus.CREDIT);
+//              	loanPaymentDao.save(loanPayment);
+             	return "Succeed";
             }else {
             	return "Your Loan is already Approved";
             }
@@ -135,6 +146,8 @@ public class RequestServiceImpl implements RequestService{
             throw new RuntimeException("Entity not found with id: " + requestId);
         }
 	}
+
+
 
 	@Override
 	public String updateToDeclined(String requestId) {
@@ -150,5 +163,7 @@ public class RequestServiceImpl implements RequestService{
             throw new RuntimeException("Entity not found with id: " + requestId);
         }
 	}
+
+	
 
 }

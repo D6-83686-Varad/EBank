@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.loan.dao.AccountDao;
 import com.app.loan.entities.Account;
+import com.app.loan.exceptions.ResourceNotFoundException;
 
 
 /**
@@ -36,4 +37,10 @@ public class AccountServiceImpl implements AccountService{
 		return accDao.save(acc);
 	}
 
+	@Override
+	public Account getAccountDetails(String accId) {
+		// TODO Auto-generated method stub
+		Account acc = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Given account id is not found"));
+		return acc;
+	}
 }

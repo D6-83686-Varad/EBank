@@ -1,10 +1,11 @@
 package com.app.loan.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.app.loan.entities.Collateral;
+//import com.app.loan.entities.Collateral;
 import com.app.loan.entities.LoanDetails;
 
 public interface LoanDetailsDao extends JpaRepository<LoanDetails, String>{

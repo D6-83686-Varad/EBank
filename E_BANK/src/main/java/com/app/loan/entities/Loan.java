@@ -78,6 +78,11 @@ public class Loan extends BaseEntity{
 	@Column(name="loan_amount")
 	private float loanAmount;
 	
+	/**
+     * Total amount of the loan.(Total Amount = Principle Amount + Interest Amount)
+     */
+	@Column(name="remaining_amount")
+	private float remainingAmount;
 	
 	 /**
      * The Equated Monthly Installment (EMI) amount for the loan.
@@ -130,8 +135,8 @@ public class Loan extends BaseEntity{
      * List of loan payments associated with this loan.
      * A loan can have multiple payments associated with it.
      */
-//	@OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private List<LoanPayment> loanPayment = new ArrayList<>();
+	@OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<LoanPayment> loanPayment = new ArrayList<>();
 	
 	
 	/**
@@ -140,10 +145,10 @@ public class Loan extends BaseEntity{
      * 
      * @param loanPayment The loan payment to be added.
      */
-//	public void addLoanPayment(LoanPayment loanPayment) {
-//		this.loanPayment.add(loanPayment);
-//		loanPayment.setLoanId(this);
-//	}
+	public void addLoanPayment(LoanPayment loanPayment) {
+		this.loanPayment.add(loanPayment);
+		loanPayment.setLoan(this);
+	}
 	
 	
 	/**
@@ -167,6 +172,7 @@ public class Loan extends BaseEntity{
 		this.endDate = endDate;
 		this.loanDetails = loanDetails;
 		this.collateralId = collateralId;
+		this.remainingAmount = loanAmount;
 	}
 
 }

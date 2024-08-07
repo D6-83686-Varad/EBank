@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.RequestDto;
+import com.app.loan.entities.Account;
 import com.app.loan.entities.Request;
 
 
@@ -89,4 +90,5 @@ public interface RequestService {
      * @return A string message indicating the result of the operation.
      */
 	String updateToDeclined(String requestId);
+	
 }

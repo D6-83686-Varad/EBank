@@ -3,6 +3,8 @@ package com.app.loan.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +34,10 @@ public class LoanAccountController {
 	{
         // Call the service layer to add the account and return the result
 		return ResponseEntity.status(HttpStatus.CREATED).body(accService.addAccount(account));
+	}
+	
+	@GetMapping("/acc/{id}")
+	public ResponseEntity<?> customerDetail(@PathVariable("id") String id){
+		return ResponseEntity.ok(accService.getAccountDetails(id));
 	}
 }

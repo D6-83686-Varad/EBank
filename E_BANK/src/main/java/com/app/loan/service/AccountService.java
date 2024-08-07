@@ -18,4 +18,7 @@ public interface AccountService {
      * @return The created `Account` entity, including any generated values or additional information.
      */
 	Account addAccount(Account acc);
+	
+	Account getAccountDetails(String accId);
+
 }
