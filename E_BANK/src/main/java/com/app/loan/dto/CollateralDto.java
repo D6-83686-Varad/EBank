@@ -1,5 +1,9 @@
 package com.app.loan.dto;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -24,6 +28,7 @@ public class CollateralDto {
      * The asset associated with the collateral.
      * This field represents the type of asset that is being used as collateral.
      */
+    @NotBlank(message = "Asset cannot be blank")
 	private String asset;
 	
 	
@@ -31,6 +36,8 @@ public class CollateralDto {
      * The value of the collateral asset.
      * This field indicates the monetary value assigned to the collateral.
      */
+    @NotNull(message = "Value cannot be null")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Value must be greater than 0")
 	private float value;
 	
 	

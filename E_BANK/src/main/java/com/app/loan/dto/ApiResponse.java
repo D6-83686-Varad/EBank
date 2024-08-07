@@ -2,6 +2,8 @@ package com.app.loan.dto;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +23,7 @@ public class ApiResponse {
      * A message providing details about the API response.
      * This can be used to convey information or status to the client.
      */
+    @NotBlank(message = "Message cannot be blank")
 	private String message;
 	
 	/**

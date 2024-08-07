@@ -1,5 +1,9 @@
 package com.app.loan.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -23,6 +27,8 @@ public class RequestDto {
      * The amount of money requested for the loan.
      * This field represents the total amount that the applicant is requesting to borrow.
      */
+	@NotNull(message = "Loan amount cannot be null")
+    @Min(value = 1, message = "Loan amount must be at least 1")
 	private int loanAmount;
 	
 	
@@ -30,6 +36,8 @@ public class RequestDto {
      * The duration of the loan in months.
      * This field specifies the period over which the loan is to be repaid.
      */
+	@NotNull(message = "Loan duration cannot be null")
+    @Min(value = 1, message = "Loan duration must be at least 1")
 	private int loanDuration;
 	
 	
@@ -37,6 +45,7 @@ public class RequestDto {
      * The type of loan requested.
      * This field indicates the specific category or type of loan that the applicant is applying for.
      */
+    @NotBlank(message = "Loan type cannot be blank")
 	private String loanType;
 	
 	
