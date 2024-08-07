@@ -74,9 +74,13 @@ public class AccountTypeSeviceImpl implements AccountTypeService {
      * @return an ApiResponse indicating success.
      */
     @Override
-    public ApiResponse addAccType(AccountTypeDTO accountTypeDto) {
+    public String addAccType(AccountTypeDTO accountTypeDto) {
         AccountType accountType = mapper.map(accountTypeDto, AccountType.class);
+        if(accountTypeDao.existsByAccTypeName(accountType.getAccTypeName()))
+        {
+        	return "AccountType is already present";
+        }
         accountTypeDao.save(accountType);
-        return new ApiResponse("Account type added successfully");
+        return "success";
     }
 }

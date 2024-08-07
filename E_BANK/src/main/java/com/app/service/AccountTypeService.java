@@ -12,5 +12,5 @@ public interface AccountTypeService {
 
     List<AccountType> getAllAccountType();
 	String updateAccountType(String acc, float interestRate);
-	ApiResponse addAccType(AccountTypeDTO acc);
+	String addAccType(AccountTypeDTO acc);
 }
