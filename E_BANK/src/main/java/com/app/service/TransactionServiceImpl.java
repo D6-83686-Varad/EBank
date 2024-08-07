@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dao.TransactionHistoryDao;
-
+import com.app.dto.TransactionHistoryDTO;
 import com.app.entity.payment.TransactionHistory;
 
 @Service
@@ -24,17 +24,33 @@ public class TransactionServiceImpl implements TransactionService {
     private ModelMapper mapper;
 
     // Method to get all transactions as DTOs
-    @Override
-    public List<TransactionHistory> getAllTransactions() {
-         List<TransactionHistory> transactionHistory = transactionHistoryDao.findAll();
-         return transactionHistory;
+    public List<TransactionHistoryDTO> getTransactionsByStatus(String status) {
+        List<TransactionHistory> histories = transactionHistoryDao.findByStatusWithAccountsAndPayments(status);
+        return histories.stream()
+                        .map(history -> mapper.map(history, TransactionHistoryDTO.class))
+                        .collect(Collectors.toList());
     }
-
-    // Method to get transactions by account type as DTOs
+    
     @Override
-    public List<TransactionHistory> getTransactionsByStatus(String status) {
-    	List<TransactionHistory> transactionHistory = transactionHistoryDao.findByStatus(status);
-        return transactionHistory;
+    public List<TransactionHistoryDTO> getAllTransactionHistories() {
+    	 List<TransactionHistory> histories = transactionHistoryDao.findAll();
+         return histories.stream()
+                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
+                         .collect(Collectors.toList());
+    }
+    @Override
+    public List<TransactionHistoryDTO> getTransactionsByAccountNoAndMonth(String accountNo, int month) {
+    	 List<TransactionHistory> histories = transactionHistoryDao.findByAccountNoAndMonth(accountNo, month);
+         return histories.stream()
+                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
+                         .collect(Collectors.toList());
+    }
+    @Override
+    public List<TransactionHistoryDTO> getTransactionsByAccountNo(String accountNo) {
+    	 List<TransactionHistory> histories = transactionHistoryDao.findByAccountNo(accountNo);
+         return histories.stream()
+                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
+                         .collect(Collectors.toList());
     }
 
    
