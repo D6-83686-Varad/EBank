@@ -21,6 +21,12 @@ public class BankServiceImpl implements BankService {
     @Autowired
     private ModelMapper mapper;
 
+    /**
+     * Adds a new bank.
+     *
+     * @param bank the BankDTO containing bank details.
+     * @return a success message.
+     */
     @Override
     public String addBank(BankDTO bank) {
         Bank bankEntity = mapper.map(bank, Bank.class);
@@ -28,33 +34,50 @@ public class BankServiceImpl implements BankService {
         return "Bank added successfully";
     }
 
+    /**
+     * Retrieves the bank details.
+     *
+     * @return the Bank entity.
+     * @throws ResourceNotFoundException if the bank is not found.
+     */
     @Override
     public Bank getBankDetails() {
         return bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Bank not found"));
     }
 
-    // Method to add to fundAvailable
+    /**
+     * Adds funds to the available funds.
+     *
+     * @param amount the amount to be added.
+     * @return true if the operation is successful.
+     */
     @Override
-    public boolean addFundAvailable(double fundAvailable) {
+    public boolean addFundAvailable(double amount) {
         Bank bank = getBankDetails();
-        bank.setFundAvailable(bank.getFundAvailable() + fundAvailable);
+        bank.setFundAvailable(bank.getFundAvailable() + amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to subtract from fundAvailable
+    /**
+     * Subtracts funds from the available funds.
+     *
+     * @param amount the amount to be subtracted.
+     * @return true if the operation is successful, false otherwise.
+     */
     @Override
-    public boolean subtractFundAvailable(double fundAvailable) {
+    public boolean subtractFundAvailable(double amount) {
         Bank bank = getBankDetails();
         double loanExpected = bank.getLoanExpected();
         double loanRecovered = bank.getLoanRecovered();
-        double fundAvailableCurrent = bank.getFundAvailable();
+        double currentFundAvailable = bank.getFundAvailable();
 
-        double newFundAvailable = fundAvailableCurrent - fundAvailable;
+        double newFundAvailable = currentFundAvailable - amount;
         double combinedAmount = loanExpected - loanRecovered + newFundAvailable;
 
-        if (combinedAmount <= 0 || newFundAvailable < 0 || combinedAmount > 0.3 * (loanExpected - loanRecovered + fundAvailableCurrent)) {
-            return false; // Invalid operation
+        // Validate the operation
+        if (newFundAvailable < 0 || combinedAmount <= 0 || combinedAmount > 0.3 * (loanExpected - loanRecovered + currentFundAvailable)) {
+            return false;
         }
 
         bank.setFundAvailable(newFundAvailable);
@@ -62,107 +85,157 @@ public class BankServiceImpl implements BankService {
         return true;
     }
 
-    // Method to add to fundReceived
+    /**
+     * Adds funds to the received funds.
+     *
+     * @param amount the amount to be added.
+     * @return true if the operation is successful.
+     */
     @Override
-    public boolean addFundReceived(double fundReceived) {
+    public boolean addFundReceived(double amount) {
         Bank bank = getBankDetails();
-        bank.setFundReceived(bank.getFundReceived() + fundReceived);
+        bank.setFundReceived(bank.getFundReceived() + amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to subtract from fundReceived
+    /**
+     * Subtracts funds from the received funds.
+     *
+     * @param amount the amount to be subtracted.
+     * @return true if the operation is successful, false otherwise.
+     */
     @Override
-    public boolean subtractFundReceived(double fundReceived) {
+    public boolean subtractFundReceived(double amount) {
         Bank bank = getBankDetails();
-        if (bank.getFundReceived() - fundReceived < 0) {
-            return false; // Invalid operation
+        if (bank.getFundReceived() - amount < 0) {
+            return false;
         }
-        bank.setFundReceived(bank.getFundReceived() - fundReceived);
+        bank.setFundReceived(bank.getFundReceived() - amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to add to fundToPay
+    /**
+     * Adds funds to the funds to pay.
+     *
+     * @param amount the amount to be added.
+     * @return true if the operation is successful.
+     */
     @Override
-    public boolean addFundToPay(double fundToPay) {
+    public boolean addFundToPay(double amount) {
         Bank bank = getBankDetails();
-        bank.setFundToPay(bank.getFundToPay() + fundToPay);
+        bank.setFundToPay(bank.getFundToPay() + amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to subtract from fundToPay
+    /**
+     * Subtracts funds from the funds to pay.
+     *
+     * @param amount the amount to be subtracted.
+     * @return true if the operation is successful, false otherwise.
+     */
     @Override
-    public boolean subtractFundToPay(double fundToPay) {
+    public boolean subtractFundToPay(double amount) {
         Bank bank = getBankDetails();
-        if (bank.getFundToPay() - fundToPay < 0) {
-            return false; // Invalid operation
+        if (bank.getFundToPay() - amount < 0) {
+            return false;
         }
-        bank.setFundToPay(bank.getFundToPay() - fundToPay);
+        bank.setFundToPay(bank.getFundToPay() - amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to add to loanDisbursed
+    /**
+     * Adds funds to the loan disbursed.
+     *
+     * @param amount the amount to be added.
+     * @return true if the operation is successful.
+     */
     @Override
-    public boolean addLoanDisbursed(double loanDisbursed) {
+    public boolean addLoanDisbursed(double amount) {
         Bank bank = getBankDetails();
-        bank.setLoanDisbursed(bank.getLoanDisbursed() + loanDisbursed);
+        bank.setLoanDisbursed(bank.getLoanDisbursed() + amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to subtract from loanDisbursed
+    /**
+     * Subtracts funds from the loan disbursed.
+     *
+     * @param amount the amount to be subtracted.
+     * @return true if the operation is successful, false otherwise.
+     */
     @Override
-    public boolean subtractLoanDisbursed(double loanDisbursed) {
+    public boolean subtractLoanDisbursed(double amount) {
         Bank bank = getBankDetails();
-        if (bank.getLoanDisbursed() - loanDisbursed < 0) {
-            return false; // Invalid operation
+        if (bank.getLoanDisbursed() - amount < 0) {
+            return false;
         }
-        bank.setLoanDisbursed(bank.getLoanDisbursed() - loanDisbursed);
+        bank.setLoanDisbursed(bank.getLoanDisbursed() - amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to add to loanRecovered
+    /**
+     * Adds funds to the loan recovered.
+     *
+     * @param amount the amount to be added.
+     * @return true if the operation is successful.
+     */
     @Override
-    public boolean addLoanRecovered(double loanRecovered) {
+    public boolean addLoanRecovered(double amount) {
         Bank bank = getBankDetails();
-        bank.setLoanRecovered(bank.getLoanRecovered() + loanRecovered);
+        bank.setLoanRecovered(bank.getLoanRecovered() + amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to subtract from loanRecovered
+    /**
+     * Subtracts funds from the loan recovered.
+     *
+     * @param amount the amount to be subtracted.
+     * @return true if the operation is successful, false otherwise.
+     */
     @Override
-    public boolean subtractLoanRecovered(double loanRecovered) {
+    public boolean subtractLoanRecovered(double amount) {
         Bank bank = getBankDetails();
-        if (bank.getLoanRecovered() - loanRecovered < 0) {
-            return false; // Invalid operation
+        if (bank.getLoanRecovered() - amount < 0) {
+            return false;
         }
-        bank.setLoanRecovered(bank.getLoanRecovered() - loanRecovered);
+        bank.setLoanRecovered(bank.getLoanRecovered() - amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to add to loanExpected
+    /**
+     * Adds funds to the loan expected.
+     *
+     * @param amount the amount to be added.
+     * @return true if the operation is successful.
+     */
     @Override
-    public boolean addLoanExpected(double loanExpected) {
+    public boolean addLoanExpected(double amount) {
         Bank bank = getBankDetails();
-        bank.setLoanExpected(bank.getLoanExpected() + loanExpected);
+        bank.setLoanExpected(bank.getLoanExpected() + amount);
         bankDao.save(bank);
         return true;
     }
 
-    // Method to subtract from loanExpected
+    /**
+     * Subtracts funds from the loan expected.
+     *
+     * @param amount the amount to be subtracted.
+     * @return true if the operation is successful, false otherwise.
+     */
     @Override
-    public boolean subtractLoanExpected(double loanExpected) {
+    public boolean subtractLoanExpected(double amount) {
         Bank bank = getBankDetails();
-        if (bank.getLoanExpected() - loanExpected < 0) {
-            return false; // Invalid operation
+        if (bank.getLoanExpected() - amount < 0) {
+            return false;
         }
-        bank.setLoanExpected(bank.getLoanExpected() - loanExpected);
+        bank.setLoanExpected(bank.getLoanExpected() - amount);
         bankDao.save(bank);
         return true;
     }

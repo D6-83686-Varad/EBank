@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import javax.servlet.Registration;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,172 +18,235 @@ import com.app.entity.account.AccountType;
 import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.AccountStatus;
-import com.app.entity.enums.Role;
 import com.app.exceptions.ResourceNotFoundException;
-import com.app.miscellaneous.mail.MailSend;
-import com.app.miscellaneous.mail.RegistrationMailSender;
 
 @Service
 @Transactional
-public class AccountSeviceImpl implements AccountSevice{
-	@Autowired
-	private AccountDao accDao;
-	
-	@Autowired
-	private BankDao bankDao;
-	@Autowired
-	private AccountTypeDao accTyDao;
-	
-	@Autowired
-	private CustomerDao customerDao;
-	
+public class AccountSeviceImpl implements AccountSevice {
+    
+    @Autowired
+    private AccountDao accountDao;
+    
+    @Autowired
+    private BankDao bankDao;
+    
+    @Autowired
+    private AccountTypeDao accountTypeDao;
+    
+    @Autowired
+    private CustomerDao customerDao;
+    
+    /**
+     * Adds a new account for the specified customer and bank with the given account type.
+     * 
+     * @param customer the customer to which the account will be linked
+     * @param bank the bank where the account will be created
+     * @param accType the type of the account to be created
+     * @return the created account
+     */
+    @Override
+    public Account addAccount(Customer customer, Bank bank, String accType) {
+        AccountType accountType = accountTypeDao.findByAccTypeName(accType)
+                .orElseThrow(() -> new ResourceNotFoundException("Account type not found"));
+        
+        Account account = new Account();
+        account.setBank(bank);
+        account.setCustomer(customer);
+        account.setStatus(AccountStatus.ACTIVATED);
+        
+        accountType.linkAccount(account);
+        customer.addAccountToCustomer(account);
+        
+        Account createdAccount = accountDao.save(account);
+        customerDao.save(customer);
+        
+        return createdAccount;
+    }
 
-
-	@Override
-	public Account addAccount(Customer customer, Bank bank, String accType) {
-		// TODO Auto-generated method stub
-		AccountType accTypes =accTyDao.findByAccTypeName(accType).orElseThrow(()->new ResourceNotFoundException("Hi"));
-		Account account =new Account();
-		//account.setAccType(accTypes);
-		account.setBank(bank);
-		account.setCustomer(customer);
-		account.setStatus(AccountStatus.ACTIVATED);
-		accTypes.linkAccount(account);
-		customer.addAccountToCustomer(account);
-		//customer.setRole(Role.ROLE_CUSTOMER);
-		Account accountCreated = accDao.save(account);
-		customerDao.save(customer);
-		
-	
-		
-		return accountCreated;
-	}
-
-
-	@Override
-	public List<Account> getAllDeactivatedAccount() {
-		List<Account> accList = accDao.getAllDeactivatedAccount();
-		if(accList.isEmpty())
-		{
-			throw new ResourceNotFoundException("There are no Deactivated Accounts");
-		}
-		return accList;
-	}
-	
-
-
-	@Override
-	public List<Account> getAllActivatedAccount() {
-		List<Account> accList = accDao.getAllActivatedAccount();
-		if(accList.isEmpty())
-		{
-			throw new ResourceNotFoundException("There are no Deactivated Accounts");
-		}
-		return accList;
-	}
-	@Override
-	 public void depositToAccount(String accountId, double amount) {
-	        if (amount <= 0) {
-	            throw new IllegalArgumentException("Deposit amount must be positive.");
-	        }
-	        
-	        Account account = accDao.findById(accountId)
-	                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
-	        
-	        double newBalance = account.getBalance() + amount;
-	        account.setBalance(newBalance);
-	        accDao.save(account);
-	    }
-	@Override
-	    public void withdrawFromAccount(String accountId, double amount) {
-	        if (amount <= 0) {
-	            throw new IllegalArgumentException("Withdrawal amount must be positive.");
-	        }
-	        
-	        Account account = accDao.findById(accountId)
-	                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
-	        
-	        if (account.getBalance() < amount) {
-	            throw new IllegalArgumentException("Insufficient balance.");
-	        }
-	        
-	        double newBalance = account.getBalance() - amount;
-	        account.setBalance(newBalance);
-	        accDao.save(account);
-	    }
-	@Override
-	public double checkBalance(String accountId) {
-		
-        Account account = accDao.findById(accountId)
+    /**
+     * Retrieves all deactivated accounts.
+     * 
+     * @return a list of all deactivated accounts
+     * @throws ResourceNotFoundException if no deactivated accounts are found
+     */
+    @Override
+    public List<Account> getAllDeactivatedAccount() {
+        List<Account> deactivatedAccounts = accountDao.getAllDeactivatedAccount();
+        if (deactivatedAccounts.isEmpty()) {
+            throw new ResourceNotFoundException("There are no deactivated accounts");
+        }
+        return deactivatedAccounts;
+    }
+    
+    /**
+     * Retrieves all activated accounts.
+     * 
+     * @return a list of all activated accounts
+     * @throws ResourceNotFoundException if no activated accounts are found
+     */
+    @Override
+    public List<Account> getAllActivatedAccount() {
+        List<Account> activatedAccounts = accountDao.getAllActivatedAccount();
+        if (activatedAccounts.isEmpty()) {
+            throw new ResourceNotFoundException("There are no activated accounts");
+        }
+        return activatedAccounts;
+    }
+    
+    /**
+     * Deposits the specified amount into the account with the given ID.
+     * 
+     * @param accountId the ID of the account
+     * @param amount the amount to be deposited
+     * @throws IllegalArgumentException if the deposit amount is not positive
+     * @throws ResourceNotFoundException if the account is not found
+     */
+    @Override
+    public void depositToAccount(String accountId, double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive.");
+        }
+        
+        Account account = accountDao.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
-       
+        
+        account.setBalance(account.getBalance() + amount);
+        accountDao.save(account);
+    }
+
+    /**
+     * Withdraws the specified amount from the account with the given ID.
+     * 
+     * @param accountId the ID of the account
+     * @param amount the amount to be withdrawn
+     * @throws IllegalArgumentException if the withdrawal amount is not positive or if the account has insufficient balance
+     * @throws ResourceNotFoundException if the account is not found
+     */
+    @Override
+    public void withdrawFromAccount(String accountId, double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive.");
+        }
+        
+        Account account = accountDao.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+        
+        if (account.getBalance() < amount) {
+            throw new IllegalArgumentException("Insufficient balance.");
+        }
+        
+        account.setBalance(account.getBalance() - amount);
+        accountDao.save(account);
+    }
+
+    /**
+     * Checks the balance of the account with the given ID.
+     * 
+     * @param accountId the ID of the account
+     * @return the balance of the account
+     * @throws ResourceNotFoundException if the account is not found
+     */
+    @Override
+    public double checkBalance(String accountId) {
+        Account account = accountDao.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
         
         return account.getBalance();
     }
-	
-	@Override
-	public List<Account> getAllSuspendedAccount() {
-		List<Account> accList = accDao.getAllSuspendedAccount();
-		if(accList.isEmpty())
-		{
-			throw new ResourceNotFoundException("There are no Deactivated Accounts");
-		}
-		return accList;
-	}
-	
-	
 
+    /**
+     * Retrieves all suspended accounts.
+     * 
+     * @return a list of all suspended accounts
+     * @throws ResourceNotFoundException if no suspended accounts are found
+     */
+    @Override
+    public List<Account> getAllSuspendedAccount() {
+        List<Account> suspendedAccounts = accountDao.getAllSuspendedAccount();
+        if (suspendedAccounts.isEmpty()) {
+            throw new ResourceNotFoundException("There are no suspended accounts");
+        }
+        return suspendedAccounts;
+    }
 
-	@Override
-	public String changeStatusOfSuspendedAccount(String accId) {
-		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
-		if(account.getStatus()==AccountStatus.SUSPENDED) {
-			
-			account.setStatus(AccountStatus.ACTIVATED);
-			accDao.save(account);
-			return "Updated account";
-		}
-		return "Failed to update";
-		
-	}
-	@Override
-	public String changeStatusOfDeactivatedAccount(String accId) {
-		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
-		if(account.getStatus()==AccountStatus.DEACTIVATED) {
-			account.setStatus(AccountStatus.ACTIVATED);
-			accDao.save(account);
-			return "Updated account";
-		}
-		return "Failed";
-		
-	}
+    /**
+     * Changes the status of a suspended account to activated.
+     * 
+     * @param accountId the ID of the account
+     * @return a message indicating whether the update was successful
+     * @throws ResourceNotFoundException if the account is not found or if its status is not suspended
+     */
+    @Override
+    public String changeStatusOfSuspendedAccount(String accountId) {
+        Account account = accountDao.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+        
+        if (account.getStatus() == AccountStatus.SUSPENDED) {
+            account.setStatus(AccountStatus.ACTIVATED);
+            accountDao.save(account);
+            return "Account status updated to activated";
+        }
+        return "Failed to update account status";
+    }
 
-	
-	@Override
-	public String changeStatusOfActivatedAccount(String accId) {
-		Account account = accDao.findById(accId).orElseThrow(()-> new ResourceNotFoundException("Status is not valid"));
-		if(account.getStatus()==AccountStatus.ACTIVATED) {
-			
-			account.setStatus(AccountStatus.DEACTIVATED);
-			accDao.save(account);
-			return "Updated account";
-		}
-		return "Failed to update";
-		
-	}
+    /**
+     * Changes the status of a deactivated account to activated.
+     * 
+     * @param accountId the ID of the account
+     * @return a message indicating whether the update was successful
+     * @throws ResourceNotFoundException if the account is not found or if its status is not deactivated
+     */
+    @Override
+    public String changeStatusOfDeactivatedAccount(String accountId) {
+        Account account = accountDao.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+        
+        if (account.getStatus() == AccountStatus.DEACTIVATED) {
+            account.setStatus(AccountStatus.ACTIVATED);
+            accountDao.save(account);
+            return "Account status updated to activated";
+        }
+        return "Failed to update account status";
+    }
 
+    /**
+     * Changes the status of an activated account to deactivated.
+     * 
+     * @param accountId the ID of the account
+     * @return a message indicating whether the update was successful
+     * @throws ResourceNotFoundException if the account is not found or if its status is not activated
+     */
+    @Override
+    public String changeStatusOfActivatedAccount(String accountId) {
+        Account account = accountDao.findById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + accountId));
+        
+        if (account.getStatus() == AccountStatus.ACTIVATED) {
+            account.setStatus(AccountStatus.DEACTIVATED);
+            accountDao.save(account);
+            return "Account status updated to deactivated";
+        }
+        return "Failed to update account status";
+    }
 
-	@Override
-	public boolean checkAccountSuspension(Account account) {
-		LocalDateTime updatedOn = account.getUpdatedOn();
+    /**
+     * Checks if the account should be suspended based on the last updated date.
+     * 
+     * @param account the account to be checked
+     * @return false if the account is suspended, true otherwise
+     */
+    @Override
+    public boolean checkAccountSuspension(Account account) {
+        LocalDateTime lastUpdated = account.getUpdatedOn();
         LocalDateTime now = LocalDateTime.now();
-        long daysBetween = ChronoUnit.DAYS.between(updatedOn, now);
-        if (daysBetween > 180) {
+        long daysSinceUpdate = ChronoUnit.DAYS.between(lastUpdated, now);
+        
+        if (daysSinceUpdate > 180) {
             account.setStatus(AccountStatus.SUSPENDED);
-            accDao.save(account);
+            accountDao.save(account);
             return false;
         }
         
         return true;
-	}
+    }
 }
