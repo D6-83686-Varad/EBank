@@ -53,6 +53,8 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "receive_acc_No")
 	private Account receicerAccount;
 	
+	private String IFSCCode="JWT_00001";
+	
 	@Column
 	private boolean status=false;
 	@Column(name="amount")

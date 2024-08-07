@@ -109,11 +109,24 @@ public class Account extends BaseEntity {
 
 	
 	
-	public void deposit(double amount,Account account)
-	{
-		this.balance = this.getBalance()- amount;
-		account.balance =account.getBalance()+ amount;
-	}
+	 // Deposit method
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive.");
+        }
+        this.balance += amount;
+    }
+
+    // Withdraw method
+    public void withdraw(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive.");
+        }
+        if (this.balance < amount) {
+            throw new IllegalArgumentException("Insufficient balance.");
+        }
+        this.balance -= amount;
+    }
 
 	public void addPayment(Payment payment, Account receiverAccount) {
 		this.getPaymentsMade().add(payment);

@@ -1,5 +1,5 @@
 package com.app.entity.enums;
 
 public enum TransType {
-DEBIT,CREDIT,EMI
+DEBIT,CREDIT,EMI,NEFT
 }

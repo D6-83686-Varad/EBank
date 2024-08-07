@@ -45,6 +45,9 @@ public class PaymentDTO {
 
     @NotNull(message = "Transaction type is mandatory")
     private TransType type;
+    
+    @NotBlank(message = "Status of payment is mandatory")
+    private String IFSCCode;
 	
 	
 	
