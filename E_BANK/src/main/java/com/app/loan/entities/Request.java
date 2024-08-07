@@ -1,5 +1,6 @@
 package com.app.loan.entities;
 
+import com.app.entity.account.Account;
 import com.app.loan.idGenerator.StringPrefixedSequenceIdGenerator;
 
 import java.util.List;
@@ -122,3 +123,4 @@ public class Request extends BaseEntity{
 	}
 	
 }
+

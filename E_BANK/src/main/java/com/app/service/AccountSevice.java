@@ -32,4 +32,15 @@ public interface AccountSevice {
 
 	boolean checkAccountSuspension(Account account);
 
+	/**
+	 * Adds a new account to the system.
+	 * This method saves the provided Account entity to the database using the AccountDao.
+	 *
+	 * @param acc The Account entity to be added. It should contain all necessary details for account creation.
+	 * @return The saved Account entity, which may include generated values or additional information from the database.
+	 */
+	Account addAccount(Account acc);
+
+	Account getAccountDetails(String accId);
+
 }
