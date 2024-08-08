@@ -168,8 +168,7 @@ public class RequestServiceImpl implements RequestService{
                 transactionHistory.setTransactionType(TransType.LOAN_DISBURSEMENT);
                 transactionHistory.setReceiverAccountNo(account.getAccountNo());
                 transactionHistory.setAccount(account);
-              	
-              	
+                account.getTransactionHistories().add(transactionHistory);
                 //Bank fund management
               	Bank bank = account.getBank();
               	bank.subtractFundAvailable(entity.getLoanAmount());

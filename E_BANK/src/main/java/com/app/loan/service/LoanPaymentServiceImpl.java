@@ -1,5 +1,7 @@
 package com.app.loan.service;
 
+import java.time.LocalDateTime;
+
 import javax.transaction.Transactional;
 
 
@@ -57,7 +59,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 			loanPayerAccount.addTransaction(loanPayment, senderTransactionHistory,"SUCCESS");
 			senderTransactionHistory.setReceiverAccountNo(bankid);
 			senderTransactionHistory.setAccount(loanPayerAccount);
-			senderTransactionHistory.setCreatedOn(loanPayment.getCreatedOn());
+			senderTransactionHistory.setCreatedOn(LocalDateTime.now());
 			loanPayment.getTransactionHistories().add(senderTransactionHistory);
 			senderTransactionHistory.setLoanPayment(loanPayment);
 			transDao.save(senderTransactionHistory);

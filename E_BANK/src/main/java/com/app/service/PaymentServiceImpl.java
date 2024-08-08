@@ -158,8 +158,8 @@ public class PaymentServiceImpl implements PaymentService {
 	        senderAccount.withdraw(amount);
 	        bank.addFundToPay(amount);
 	        bank.addFundAvailable(amount);
-	        bank.addFundReceived(amount);
-	        bankDao.save(bank);
+	       
+	        
 	        payment.setStatus(false);
 	        
 	      //Transaction History for sender
