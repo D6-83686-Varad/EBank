@@ -1,5 +1,7 @@
 package com.app.loan.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
@@ -10,6 +12,7 @@ import com.app.loan.dao.LoanDetailsDao;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.LoanDetailsDto;
 import com.app.loan.entities.LoanDetails;
+import com.app.loan.entities.Request;
 
 
 /**
@@ -84,5 +87,16 @@ public class LoanDetailsServiceImpl implements LoanDetailsService{
 		}
 	}
 
+
+	@Override
+	public List<Request> getAllLoansByLoanName(String loanName) {
+		if(loTyDao.existsById(loanName)) {
+			return loTyDao.findLoanDetailsByLoanName(loanName) ;
+		}
+		else{
+			return null;
+		}
+		
+	}
 
 }
