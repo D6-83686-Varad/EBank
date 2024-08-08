@@ -6,6 +6,11 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.dao.BankDao;
+import com.app.dao.TransactionHistoryDao;
+import com.app.entity.account.Account;
+import com.app.entity.bank.Bank;
+import com.app.entity.payment.TransactionHistory;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.entities.Loan;
@@ -21,14 +26,42 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 	@Autowired
 	private LoanDao loanDao;
 	
+	@Autowired
+	private BankDao bankDao;
+	
+	@Autowired
+	private TransactionHistoryDao transDao;
+	
 	@Override
 	public ApiResponse addPayment(String loan) {
 		// TODO Auto-generated method stub
+		// Retrieve bank details
+        Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Invalid bank details"));
+		String bankid = bank.getBankBranchId();
 		Loan loanDet = loanDao.findById(loan).orElseThrow(()-> new ResourceNotFoundException("Loan Details Not Found for given Id"+ loan));
+		//Retrieve account;
+		Account loanPayerAccount =loanDet.getAccount_id();
 		if(loanDet.getRemainingAmount() > 0) {
 			LoanPayment loanPayment= new LoanPayment(loanDet, (loanDet.getRemainingAmount()-loanDet.getEmi()), loanDet.getLoanAmount(), TransactionStatus.DEBIT);
 			loanDet.addLoanPayment(loanPayment);
 			loanDet.setRemainingAmount(loanDet.getRemainingAmount()-loanDet.getEmi());
+			//Fund transfer
+			//Bank bank = account.getBank();
+			loanPayerAccount.withdraw(loanDet.getEmi());
+			bank.addFundAvailable(loanDet.getEmi());
+			bank.addLoanRecovered(loanDet.getEmi());
+			bank.subtractLoanExpected(loanDet.getEmi());
+			
+			//Transaction
+			TransactionHistory senderTransactionHistory = new TransactionHistory();
+			loanPayerAccount.addTransaction(loanPayment, senderTransactionHistory,"SUCCESS");
+			senderTransactionHistory.setReceiverAccountNo(bankid);
+			senderTransactionHistory.setAccount(loanPayerAccount);
+			senderTransactionHistory.setCreatedOn(loanPayment.getCreatedOn());
+			loanPayment.getTransactionHistories().add(senderTransactionHistory);
+			senderTransactionHistory.setLoanPayment(loanPayment);
+			transDao.save(senderTransactionHistory);
+			//
 			loanDao.save(loanDet);
 			return new ApiResponse("Money Debited Successfully");
 		}else {

@@ -22,6 +22,7 @@ import org.hibernate.annotations.Parameter;
 import com.app.entity.account.Account;
 import com.app.entity.enums.TransType;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
+import com.app.loan.entities.LoanPayment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -73,5 +74,9 @@ public class TransactionHistory  {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ref_id")
 	private Payment payment;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "loan_ref_id")
+	private LoanPayment loanPayment;
 
 }

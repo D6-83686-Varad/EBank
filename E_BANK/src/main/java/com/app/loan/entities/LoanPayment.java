@@ -1,5 +1,10 @@
 package com.app.loan.entities;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,11 +13,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import com.app.entity.payment.TransactionHistory;
 import com.app.loan.idGenerator.StringPrefixedSequenceIdGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -35,7 +43,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class LoanPayment extends BaseEntity{
+public class LoanPayment{
 	
 	
 	/**
@@ -93,6 +101,12 @@ public class LoanPayment extends BaseEntity{
 	@Column(name="transaction_status")
 	private TransactionStatus status = TransactionStatus.DEBIT;
 	
+	@OneToMany(mappedBy = "loanPayment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TransactionHistory> transactionHistories = new ArrayList<>();
+	
+	@Column(name="created_on")
+	 @CreationTimestamp
+	 private LocalDateTime createdOn;
 	
 	public LoanPayment(Loan loan, float payableAmount, float loanAmount, TransactionStatus status) {
 		super();
