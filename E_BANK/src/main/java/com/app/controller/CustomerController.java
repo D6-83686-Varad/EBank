@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.dto.CustomerDTO;
+import com.app.dto.CustomerReturnDTO;
 import com.app.dto.LoginRequestDTO;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.Role;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import java.util.List;
@@ -54,16 +56,25 @@ public class CustomerController {
         String response = customerService.updateCustomerEmailAndPhone(id, email, phoneNumber);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @PutMapping("/updatePassword/{id}")
+    public ResponseEntity<String> updateCustomerPassword(
+            @PathVariable Long id,
+            @RequestParam @NotNull(message = "Password must not be empty") String password){
+           String response =  customerService.updateCustomerPassword(id , password);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
 
     @GetMapping("/getAllCustomers")
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
+    public ResponseEntity<List<CustomerReturnDTO>> getAllCustomers() {
+        List<CustomerReturnDTO> customers = customerService.getAllCustomers();
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     
     @GetMapping("/admins")
-    public ResponseEntity<List<Customer>> getAllAdmins() {
-        List<Customer> admins = customerService.getAllAdmins();
+    public ResponseEntity<List<CustomerReturnDTO>> getAllAdmins() {
+        List<CustomerReturnDTO> admins = customerService.getAllAdmins();
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
     
@@ -73,8 +84,8 @@ public class CustomerController {
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
     @GetMapping("/status/false")
-    public ResponseEntity<List<Customer>> getCustomersWithStatusFalse() {
-        List<Customer> customers = customerService.getCustomersWithStatusFalse();
+    public ResponseEntity<List<CustomerReturnDTO>> getCustomersWithStatusFalse() {
+        List<CustomerReturnDTO> customers = customerService.getCustomersWithStatusFalse();
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 

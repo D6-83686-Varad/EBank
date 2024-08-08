@@ -15,6 +15,8 @@ import com.app.dao.AccountTypeDao;
 import com.app.dao.BankDao;
 import com.app.dao.CustomerDao;
 import com.app.dto.CustomerDTO;
+import com.app.dto.CustomerReturnDTO;
+import com.app.dto.TransactionHistoryDTO;
 import com.app.entity.account.Account;
 import com.app.entity.bank.Bank;
 import com.app.entity.customer.Customer;
@@ -78,6 +80,16 @@ public class CustomerServiceImpl implements CustomerService {
         customerDao.save(existingCustomer);
         return "Customer Details Updated Successfully!";
     }
+    @Override
+    public String updateCustomerPassword(Long customerId, String newPassword) {
+        Customer existingCustomer = customerDao.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+        if (newPassword != null && !newPassword.isEmpty()) {
+            existingCustomer.setPassword(newPassword);
+        }
+        customerDao.save(existingCustomer);
+        return "Success";
+    }
 
     /**
      * Retrieves the details of a customer.
@@ -98,8 +110,8 @@ public class CustomerServiceImpl implements CustomerService {
      * @return a list of customers.
      */
     @Override
-    public List<Customer> getCustomersWithStatusFalse() {
-        return customerDao.findByStatusFalse().stream().collect(Collectors.toList());
+    public List<CustomerReturnDTO> getCustomersWithStatusFalse() {
+        return customerDao.findByStatusFalse().stream().map(customer -> mapper.map(customer, CustomerReturnDTO.class)).collect(Collectors.toList());
     }
 
     /**
@@ -108,8 +120,8 @@ public class CustomerServiceImpl implements CustomerService {
      * @return a list of admins.
      */
     @Override
-    public List<Customer> getAllAdmins() {
-        return customerDao.findByRole(Role.ROLE_ADMIN).stream().collect(Collectors.toList());
+    public List<CustomerReturnDTO> getAllAdmins() {
+        return customerDao.findByRole(Role.ROLE_ADMIN).stream().map(customer -> mapper.map(customer, CustomerReturnDTO.class)).collect(Collectors.toList());
     }
 
     /**
@@ -118,8 +130,8 @@ public class CustomerServiceImpl implements CustomerService {
      * @return a list of customers.
      */
     @Override
-    public List<Customer> getAllCustomers() {
-        return customerDao.findAll().stream().collect(Collectors.toList());
+    public List<CustomerReturnDTO> getAllCustomers() {
+        return customerDao.findAll().stream().map(customer -> mapper.map(customer, CustomerReturnDTO.class)).collect(Collectors.toList());
     }
 
     /**
@@ -240,4 +252,5 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setTOTP(newTpin);
         customerDao.save(customer);
     }
+    
 }
