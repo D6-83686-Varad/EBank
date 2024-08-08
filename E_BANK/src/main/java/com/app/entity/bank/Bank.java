@@ -71,7 +71,7 @@ public class Bank {
         double newFundAvailable = this.fundAvailable - amount;
         double combinedAmount = this.loanExpected - this.loanRecovered + newFundAvailable;
 
-        if (newFundAvailable < 0 || combinedAmount <= 0 || combinedAmount > 0.3 * (this.loanExpected - this.loanRecovered + this.fundAvailable)) {
+        if (newFundAvailable < 0 || combinedAmount <= 0 || combinedAmount > 0.3 * (this.loanExpected  + this.fundAvailable)) {
             return false;
         }
 
