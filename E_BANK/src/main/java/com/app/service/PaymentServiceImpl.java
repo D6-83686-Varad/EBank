@@ -76,6 +76,7 @@ public class PaymentServiceImpl implements PaymentService {
 	            double fee = amount * 0.0005;
 	            senderAccount.withdraw(fee);
 	            bank.addFundAvailable(fee);
+	            
 	            bankDao.save(bank);
 	            System.out.println("Fee applied and bank updated successfully");
 	        }
@@ -83,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
 	        // Perform the transfer
 	        senderAccount.withdraw(amount);
 	        receiverAccount.deposit(amount);
-	        
+	       
 	        //Transaction History for sender
 	        TransactionHistory senderTransactionHistory = new TransactionHistory();
 	        senderAccount.addTransaction(payment, senderTransactionHistory, payments,"SUCCESS");
@@ -157,6 +158,8 @@ public class PaymentServiceImpl implements PaymentService {
 	        senderAccount.withdraw(amount);
 	        bank.addFundToPay(amount);
 	        bank.addFundAvailable(amount);
+	        bank.addFundReceived(amount);
+	        bankDao.save(bank);
 	        payment.setStatus(false);
 	        
 	      //Transaction History for sender

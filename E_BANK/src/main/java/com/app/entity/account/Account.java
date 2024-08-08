@@ -37,6 +37,7 @@ import com.app.entity.enums.TransType;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
+import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.Request;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -183,6 +184,16 @@ public class Account extends BaseEntity {
 		senderTransHistory.setPayment(payment);
 		
 	}
+
+	public void addTransaction(LoanPayment loanPayment, TransactionHistory senderTransactionHistory, String string) {
+		// TODO Auto-generated method stub
+		
+		senderTransactionHistory.setDescription("EMI payment");
+		senderTransactionHistory.setTransactionType(TransType.EMI);
+		senderTransactionHistory.setAmount(loanPayment.getLoanAmount());
+		senderTransactionHistory.setBalance(loanPayment.getLoan().getRemainingAmount());
+		senderTransactionHistory.setStatus(string);
+}
 
 
 
