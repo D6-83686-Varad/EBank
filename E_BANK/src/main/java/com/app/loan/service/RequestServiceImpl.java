@@ -1,6 +1,7 @@
 package com.app.loan.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dao.AccountDao;
+import com.app.dao.BankDao;
+import com.app.dao.TransactionHistoryDao;
 import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dao.LoanDetailsDao;
@@ -27,7 +30,9 @@ import com.app.loan.entities.Request;
 import com.app.loan.entities.Status;
 import com.app.loan.entities.TransactionStatus;
 import com.app.entity.account.Account;
-
+import com.app.entity.bank.Bank;
+import com.app.entity.enums.TransType;
+import com.app.entity.payment.TransactionHistory;
 import com.app.loan.exceptions.ResourceNotFoundException;
 
 
@@ -51,7 +56,13 @@ public class RequestServiceImpl implements RequestService{
 	private CollateralDao collateralDao;
 	
 	@Autowired
+	private BankDao bankDao;
+	
+	@Autowired
 	private LoanDetailsDao loanDetailsDao;
+	
+	@Autowired
+	private TransactionHistoryDao transactionHistoryDao;
 
 	@Override
 	public ApiResponse addRequest(RequestDto reqDto) {
@@ -126,7 +137,7 @@ public class RequestServiceImpl implements RequestService{
 	public ApiResponse updateToApproved(String requestId) {
 		// TODO Auto-generated method stub
 		Optional<Request> optionalEntity = reqDao.findById(requestId);
-
+         
         if (optionalEntity.isPresent()) {
         	
             Request entity = optionalEntity.get();
@@ -145,7 +156,30 @@ public class RequestServiceImpl implements RequestService{
               	Loan loan = new Loan(account, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), LocalDate.now(), LocalDate.now().plusMonths(entity.getLoanDuration()), loanDetails, collateral );
               	Loan forLoanId = loanDao.save(loan);
               	forLoanId.addLoanPayment(new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT));
-
+                
+              	//Fund transfer to account
+              	account.setBalance(account.getBalance()+entity.getLoanAmount());
+                TransactionHistory transactionHistory  = new TransactionHistory();
+                transactionHistory.setAmount(entity.getLoanAmount());
+                transactionHistory.setBalance(account.getBalance());
+                transactionHistory.setCreatedOn(LocalDateTime.now());
+                transactionHistory.setDescription("Loan Disbursed for "+loanDetails.getLoanName());
+                transactionHistory.setStatus("SUCCESS");
+                transactionHistory.setTransactionType(TransType.LOAN_DISBURSEMENT);
+                transactionHistory.setReceiverAccountNo(account.getAccountNo());
+                transactionHistory.setAccount(account);
+              	
+              	
+                //Bank fund management
+              	Bank bank = account.getBank();
+              	bank.subtractFundAvailable(entity.getLoanAmount());
+              	bank.addLoanDisbursed(entity.getLoanAmount());
+              	bank.addLoanExpected(entity.getLoanAmount()+interest);
+              	
+              	bankDao.save(bank);
+              	accDao.save(account);
+              	transactionHistoryDao.save(transactionHistory);
+              	
              	return new ApiResponse("Your Loan Request is approved , You will recieve money in short time.....");
             }else {
             	if(entity.getStatus() == Status.A) {
