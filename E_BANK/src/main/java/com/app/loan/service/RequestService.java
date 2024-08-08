@@ -69,7 +69,7 @@ public interface RequestService {
      * @param requestId The unique identifier of the loan request to be updated.
      * @return A string message indicating the result of the operation.
      */
-	String updateToPending(String requestId);
+	ApiResponse updateToPending(String requestId);
 	
 	/**
      * Updates the status of a loan request to approved.
@@ -79,7 +79,7 @@ public interface RequestService {
      * @param requestId The unique identifier of the loan request to be updated.
      * @return A string message indicating the result of the operation.
      */
-	String updateToApproved(String requestId);
+	ApiResponse updateToApproved(String requestId);
 	
 	/**
      * Updates the status of a loan request to declined.
@@ -89,6 +89,6 @@ public interface RequestService {
      * @param requestId The unique identifier of the loan request to be updated.
      * @return A string message indicating the result of the operation.
      */
-	String updateToDeclined(String requestId);
+	ApiResponse updateToDeclined(String requestId);
 	
 }

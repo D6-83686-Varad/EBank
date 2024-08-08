@@ -1,8 +1,6 @@
 package com.app.loan.service;
 
 import java.time.LocalDate;
-
-
 import java.util.List;
 import java.util.Optional;
 
@@ -13,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dao.AccountDao;
-import com.app.entity.account.Account;
 import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dao.LoanDetailsDao;
-import com.app.loan.dao.LoanPaymentDao;
 import com.app.loan.dao.RequestDao;
+
 import com.app.loan.dto.RequestDto;
+import com.app.loan.dto.ApiResponse;
 
 import com.app.loan.entities.Collateral;
 import com.app.loan.entities.Loan;
@@ -28,7 +26,8 @@ import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.Request;
 import com.app.loan.entities.Status;
 import com.app.loan.entities.TransactionStatus;
-import com.app.loan.dto.ApiResponse;
+import com.app.entity.account.Account;
+
 import com.app.loan.exceptions.ResourceNotFoundException;
 
 
@@ -53,9 +52,6 @@ public class RequestServiceImpl implements RequestService{
 	
 	@Autowired
 	private LoanDetailsDao loanDetailsDao;
-	
-	@Autowired
-	private LoanPaymentDao loanPaymentDao;
 
 	@Override
 	public ApiResponse addRequest(RequestDto reqDto) {
@@ -65,11 +61,15 @@ public class RequestServiceImpl implements RequestService{
 		Account account = accDao.findById(reqDto.getAccountId()).orElseThrow(()-> new ResourceNotFoundException("Invalid Account Id"));
 		LoanDetails loanDetails = loanDetailsDao.findById(reqDto.getLoanType()).orElseThrow(()-> new ResourceNotFoundException("Invalid Loan details Id"));
 
+		if(reqDto.getLoanAmount() > loanDetails.getMinAmount() && reqDto.getLoanAmount() < loanDetails.getMaxAmount() && reqDto.getLoanDuration() < loanDetails.getTenure()) {
         // Map RequestDto to Request entity and associate with account and loan details
-		Request req = mapper.map(reqDto, Request.class);
-		account.addRequest(req);
-		loanDetails.addRequestLoanType(req);
-		return new ApiResponse("Added a new Req.uest");
+			Request req = mapper.map(reqDto, Request.class);
+			account.addRequest(req);
+			loanDetails.addRequestLoanType(req);
+			return new ApiResponse("Added a new Request");
+		}else {
+			return new ApiResponse("Please review the loan conditions. Please enter valid details");
+		}
 		
 	}
 
@@ -98,14 +98,24 @@ public class RequestServiceImpl implements RequestService{
 	}
 
 	@Override
-	public String updateToPending(String requestId) {
+	public ApiResponse updateToPending(String requestId) {
 		// TODO Auto-generated method stub
 		Optional<Request> optionalEntity = reqDao.findById(requestId);
         if (optionalEntity.isPresent()) {
             Request entity = optionalEntity.get();
-            entity.setStatus(Status.P);
-            reqDao.save(entity);
-            return "Succeed";
+            if(entity.getStatus() == Status.R) {
+            	entity.setStatus(Status.P);
+            	reqDao.save(entity);
+            	return new ApiResponse("Succeesfully Updated to Pending");
+            }else {
+            	if(entity.getStatus() == Status.A) {
+            		return new ApiResponse("Loan for given request is already Approved !");
+            	}else if(entity.getStatus() == Status.D){
+            		return new ApiResponse("Loan for given request is Declined !");
+            	}else {
+            		return new ApiResponse("Given Loan request is already marked as Pending !");
+            	}
+            }
         } else {
             // Handle the case where the entity is not found
             throw new RuntimeException("Entity not found with id: " + requestId);
@@ -113,7 +123,7 @@ public class RequestServiceImpl implements RequestService{
 	}
 
 	@Override
-	public String updateToApproved(String requestId) {
+	public ApiResponse updateToApproved(String requestId) {
 		// TODO Auto-generated method stub
 		Optional<Request> optionalEntity = reqDao.findById(requestId);
 
@@ -135,12 +145,16 @@ public class RequestServiceImpl implements RequestService{
               	Loan loan = new Loan(account, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), LocalDate.now(), LocalDate.now().plusMonths(entity.getLoanDuration()), loanDetails, collateral );
               	Loan forLoanId = loanDao.save(loan);
               	forLoanId.addLoanPayment(new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT));
-//              	System.out.println(forLoanId.getLoanNo());
-//              	LoanPayment loanPayment =new LoanPayment(forLoanId, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), TransactionStatus.CREDIT);
-//              	loanPaymentDao.save(loanPayment);
-             	return "Succeed";
+
+             	return new ApiResponse("Your Loan Request is approved , You will recieve money in short time.....");
             }else {
-            	return "Your Loan is already Approved";
+            	if(entity.getStatus() == Status.A) {
+            		return new ApiResponse("Loan for given request is already Approved !");
+            	}else if(entity.getStatus() == Status.D){
+            		return new ApiResponse("Loan for given request is Declined !");
+            	}else {
+            		return new ApiResponse("Given Loan request is marked as Requested !");
+            	}
             }
             
         } else {
@@ -152,14 +166,22 @@ public class RequestServiceImpl implements RequestService{
 
 
 	@Override
-	public String updateToDeclined(String requestId) {
+	public ApiResponse updateToDeclined(String requestId) {
 		// TODO Auto-generated method stub
 		Optional<Request> optionalEntity = reqDao.findById(requestId);
         if (optionalEntity.isPresent()) {
             Request entity = optionalEntity.get();
-            entity.setStatus(Status.D);
-            reqDao.save(entity);
-            return "Succeed";
+            if(entity.getStatus()==Status.P | entity.getStatus() == Status.R) {
+            	entity.setStatus(Status.D);
+            	reqDao.save(entity);
+            	return new ApiResponse("Request is declined..  ");
+            }else {
+            	if(entity.getStatus() == Status.A) {
+            		return new ApiResponse("Can't delete approved requests");
+            	}else {
+            		return new ApiResponse("Given request is already marked as declined");
+            	}
+            }
         } else {
             // Handle the case where the entity is not found
             throw new RuntimeException("Entity not found with id: " + requestId);
