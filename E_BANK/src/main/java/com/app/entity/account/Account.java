@@ -1,6 +1,7 @@
 package com.app.entity.account;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -37,6 +38,7 @@ import com.app.entity.enums.TransType;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
+import com.app.loan.entities.LoanDetails;
 import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.Request;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -195,6 +197,22 @@ public class Account extends BaseEntity {
 		senderTransactionHistory.setStatus(string);
 }
 
+	public void addTransaction(Request entity, LoanDetails loanDetails, TransactionHistory transactionHistory) {
+		// TODO Auto-generated method stub
+		transactionHistory.setAmount(entity.getLoanAmount());
+        transactionHistory.setBalance(this.getBalance());
+        transactionHistory.setCreatedOn(LocalDateTime.now());
+        transactionHistory.setDescription("Loan Disbursed for "+loanDetails.getLoanName());
+        transactionHistory.setStatus("SUCCESS");
+        transactionHistory.setTransactionType(TransType.LOAN_DISBURSEMENT);
+        transactionHistory.setReceiverAccountNo(this.getAccountNo());
+        transactionHistory.setAccount(this);
+       // this.getTransactionHistories().add(transactionHistory);
+	}
+
+	
+
+	
 
 
 

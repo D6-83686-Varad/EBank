@@ -157,18 +157,11 @@ public class RequestServiceImpl implements RequestService{
               	Loan forLoanId = loanDao.save(loan);
               	forLoanId.addLoanPayment(new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT));
                 
+              	;
               	//Fund transfer to account
               	account.setBalance(account.getBalance()+entity.getLoanAmount());
                 TransactionHistory transactionHistory  = new TransactionHistory();
-                transactionHistory.setAmount(entity.getLoanAmount());
-                transactionHistory.setBalance(account.getBalance());
-                transactionHistory.setCreatedOn(LocalDateTime.now());
-                transactionHistory.setDescription("Loan Disbursed for "+loanDetails.getLoanName());
-                transactionHistory.setStatus("SUCCESS");
-                transactionHistory.setTransactionType(TransType.LOAN_DISBURSEMENT);
-                transactionHistory.setReceiverAccountNo(account.getAccountNo());
-                transactionHistory.setAccount(account);
-                account.getTransactionHistories().add(transactionHistory);
+                account.addTransaction(entity, loanDetails,transactionHistory);
                 //Bank fund management
               	Bank bank = account.getBank();
               	bank.subtractFundAvailable(entity.getLoanAmount());
