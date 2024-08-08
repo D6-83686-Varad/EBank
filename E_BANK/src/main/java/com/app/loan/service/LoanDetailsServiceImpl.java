@@ -18,7 +18,7 @@ import com.app.loan.entities.LoanDetails;
  */
 @Service
 @Transactional
-public class LoanDetailsAServiceImpl implements LoanDetailsService{
+public class LoanDetailsServiceImpl implements LoanDetailsService{
 
 	
     // DAO for accessing loan details data from the database
