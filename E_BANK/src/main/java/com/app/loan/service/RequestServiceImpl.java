@@ -1,7 +1,8 @@
 package com.app.loan.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -29,11 +30,12 @@ import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.Request;
 import com.app.loan.entities.Status;
 import com.app.loan.entities.TransactionStatus;
+import com.app.loan.exceptions.ResourceNotFoundException;
 import com.app.entity.account.Account;
 import com.app.entity.bank.Bank;
-import com.app.entity.enums.TransType;
 import com.app.entity.payment.TransactionHistory;
-import com.app.loan.exceptions.ResourceNotFoundException;
+
+
 import com.app.miscellaneous.mail.MailSend;
 import com.app.miscellaneous.mail.RegistrationMailSender;
 
@@ -119,9 +121,11 @@ public class RequestServiceImpl implements RequestService{
             if(entity.getStatus() == Status.R) {
             	entity.setStatus(Status.P);
             	reqDao.save(entity);
+            	
             	RegistrationMailSender afterRequest = new RegistrationMailSender(entity.getAccount().getCustomer().getEmail(),entity.getAccount().getAccountNo(), entity.getRequestId(), entity.getAccount().getBank().getBankName());
         		MailSend.sendEmail(afterRequest.getMessage(), afterRequest.getSubject(), afterRequest.getTo());
-            	return new ApiResponse("Succeesfully Updated to Pending");
+            	
+        		return new ApiResponse("Succeesfully Updated to Pending");
             }else {
             	if(entity.getStatus() == Status.A) {
             		return new ApiResponse("Loan for given request is already Approved !");
@@ -161,11 +165,12 @@ public class RequestServiceImpl implements RequestService{
               	Loan forLoanId = loanDao.save(loan);
               	forLoanId.addLoanPayment(new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT));
                 
-              	;
+
               	//Fund transfer to account
               	account.setBalance(account.getBalance()+entity.getLoanAmount());
                 TransactionHistory transactionHistory  = new TransactionHistory();
                 account.addTransaction(entity, loanDetails,transactionHistory);
+                
                 //Bank fund management
               	Bank bank = account.getBank();
               	bank.subtractFundAvailable(entity.getLoanAmount());
@@ -175,6 +180,10 @@ public class RequestServiceImpl implements RequestService{
               	bankDao.save(bank);
               	accDao.save(account);
               	transactionHistoryDao.save(transactionHistory);
+              	
+            	RegistrationMailSender afterApproved = new RegistrationMailSender(account.getCustomer().getEmail(), account.getAccountNo(), entity.getRequestId(), account.getBank().getBankName(), forLoanId.getLoanNo());
+        		MailSend.sendEmail(afterApproved.getMessage(), afterApproved.getSubject(), afterApproved.getTo());
+
               	
              	return new ApiResponse("Your Loan Request is approved , You will recieve money in short time.....");
             }else {
@@ -204,7 +213,11 @@ public class RequestServiceImpl implements RequestService{
             if(entity.getStatus()==Status.P | entity.getStatus() == Status.R) {
             	entity.setStatus(Status.D);
             	reqDao.save(entity);
-            	return new ApiResponse("Request is declined..  ");
+            	
+            	RegistrationMailSender afterDeclined = new RegistrationMailSender(entity.getAccount().getCustomer().getEmail(), entity.getRequestId(), entity.getAccount().getBank().getBankName());
+        		MailSend.sendEmail(afterDeclined.getMessage(), afterDeclined.getSubject(), afterDeclined.getTo());
+            	
+        		return new ApiResponse("Request is declined..  ");
             }else {
             	if(entity.getStatus() == Status.A) {
             		return new ApiResponse("Can't delete approved requests");
@@ -216,6 +229,17 @@ public class RequestServiceImpl implements RequestService{
             // Handle the case where the entity is not found
             throw new RuntimeException("Entity not found with id: " + requestId);
         }
+	}
+
+	@Override
+	public List<Loan> getListOfLoansByAcccount(String accountNo) {
+		// TODO Auto-generated method stub
+		Account account  = accDao.findById(accountNo).orElseThrow(()-> new ResourceNotFoundException("Given Account Not Found"));
+		List<Loan> listOfLoan = loanDao.findLoanByAccountId(account.getAccountNo());
+		if(listOfLoan.isEmpty()) {
+			return null;
+		}
+		return listOfLoan;
 	}
 
 	

@@ -70,7 +70,7 @@ public class Loan extends BaseEntity{
      */
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="account_id", nullable = false)
-	private Account account_id;
+	private Account accountId;
 	
 	
 	/**
@@ -166,7 +166,7 @@ public class Loan extends BaseEntity{
 	public Loan(Account account_id, float loanAmount, float emi, LocalDate startDate, LocalDate endDate,
 			LoanDetails loanDetails, Collateral collateralId) {
 		super();
-		this.account_id = account_id;
+		this.accountId = account_id;
 		this.loanAmount = loanAmount;
 		this.emi = emi;
 		this.startDate = startDate;
