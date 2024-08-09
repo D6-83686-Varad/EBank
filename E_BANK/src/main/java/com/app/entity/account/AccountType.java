@@ -27,7 +27,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name="accountType")
+@Table(name="account_types")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,7 +41,7 @@ public class AccountType extends BaseEntity {
         strategy = "com.app.id.generator.StringPrefixedSequenceIdGenerator", 
         parameters = {
             @Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "1"),
-            @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "A_"),
+            @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "AT_"),
             @Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%02d") })
 	private String accTypeId;
 	@Column(name="acc_type_name", length=10,nullable = false)

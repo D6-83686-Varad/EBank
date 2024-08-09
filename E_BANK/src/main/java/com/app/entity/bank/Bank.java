@@ -25,8 +25,8 @@ public class Bank {
         name = "bank_seq",
         strategy = "com.app.id.generator.StringPrefixedSequenceIdGenerator",
         parameters = {
-            @Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "2"),
-            @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "JWT_"),
+            @Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "1"),
+            @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "BANK_"),
             @Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%05d")
         }
     )
@@ -35,7 +35,7 @@ public class Bank {
     @Column(name = "bank_name", length = 20, nullable = false, unique = true)
     private String bankName;
 
-    @Column(name = "contact_email", length = 20, nullable = false, unique = true)
+    @Column(name = "bank_email", length = 20, nullable = false, unique = true)
     private String contactEmail;
 
     // FUNDS

@@ -16,6 +16,7 @@ import com.app.dao.BankDao;
 import com.app.dao.CustomerDao;
 import com.app.dto.CustomerDTO;
 import com.app.dto.CustomerReturnDTO;
+import com.app.dto.LoginResponseDTO;
 import com.app.dto.TransactionHistoryDTO;
 import com.app.entity.account.Account;
 import com.app.entity.bank.Bank;
@@ -161,7 +162,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws ResourceNotFoundException if the credentials are invalid or account is suspended.
      */
     @Override
-    public Customer login(String emailOrPhone, String password) {
+    public LoginResponseDTO login(String emailOrPhone, String password) {
         Optional<Customer> customerOpt = customerDao.findByEmail(emailOrPhone);
         if (!customerOpt.isPresent()) {
             customerOpt = customerDao.findByPhoneNumber(emailOrPhone);
@@ -179,8 +180,10 @@ public class CustomerServiceImpl implements CustomerService {
                 throw new ResourceNotFoundException("Account is suspended due to inactivity.");
             }
         }
+        LoginResponseDTO loginResponseDTO = mapper.map(customer, LoginResponseDTO.class);
+        loginResponseDTO.setAccountNo(account.getAccountNo());
 
-        return customer;
+        return loginResponseDTO;
     }
 
     /**

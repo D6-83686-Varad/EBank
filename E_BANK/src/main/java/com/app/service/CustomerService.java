@@ -2,6 +2,7 @@ package com.app.service;
 
 import com.app.dto.CustomerDTO;
 import com.app.dto.CustomerReturnDTO;
+import com.app.dto.LoginResponseDTO;
 import com.app.entity.customer.Customer;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface CustomerService {
 
     String setCustomerStatusToTrue(Long customerId);
 
-	Customer login(String emailOrPhone, String password);
+	LoginResponseDTO login(String emailOrPhone, String password);
 
 	String createAdmin(Long id);
 

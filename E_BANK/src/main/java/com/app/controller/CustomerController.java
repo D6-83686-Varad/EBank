@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.app.dto.CustomerDTO;
 import com.app.dto.CustomerReturnDTO;
 import com.app.dto.LoginRequestDTO;
+import com.app.dto.LoginResponseDTO;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.Role;
 import com.app.exceptions.BadRequestException;
@@ -96,9 +97,9 @@ public class CustomerController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
-        customerService.login(loginRequest.getEmailOrPhone(), loginRequest.getPassword());
-        return new ResponseEntity<>("Login successful!", HttpStatus.OK);
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+      LoginResponseDTO loginResponse = customerService.login(loginRequest.getEmailOrPhone(), loginRequest.getPassword());
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
     
     @PutMapping("/updateAdmin/{id}")

@@ -64,7 +64,7 @@ public class Payment {
 	@Column(name="receive_acc_No")
 	private String reciverAccountNo;
 	
-	private String IFSCCode="JWT_00001";
+	private String IFSCCode="BANK_00001";
 	
 	@Column
 	private boolean status=true;

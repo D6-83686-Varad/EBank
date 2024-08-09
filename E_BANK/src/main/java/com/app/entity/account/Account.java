@@ -52,7 +52,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name="account")
+@Table(name="accounts")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -68,9 +68,9 @@ public class Account extends BaseEntity {
         strategy = "com.app.id.generator.StringPrefixedSequenceIdGenerator", 
         parameters = {
             @Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "1"),
-            @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "SPB"),
-            @Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%06d") })
-	@Column(name="account_no")
+            @Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "AC"),
+            @Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%05d") })
+	@Column(name="accNo")
 	private String accountNo;
 	@Enumerated(EnumType.STRING)
 	private AccountStatus status;
