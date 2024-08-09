@@ -28,9 +28,9 @@ public interface CustomerService {
 
 	List<CustomerReturnDTO> getAllAdmins();
 
-	void verifyCustomerTpin(Long customerId, int inputTpin);
+	void verifyCustomerTpin(Long customerId, String inputTpin);
 
-	void updateCustomerTpin(Long customerId, int newTpin);
+	void updateCustomerTpin(Long customerId, String newTpin);
 
 	String updateCustomerPassword(Long customerId, String newPassword);
 

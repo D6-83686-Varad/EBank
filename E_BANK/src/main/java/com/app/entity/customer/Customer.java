@@ -54,7 +54,7 @@ public class Customer extends BaseEntity {
 	    private String email;
 	    @Column(length=10,nullable = false, unique = true)
 	    private String phoneNumber;
-	    @Column(length=64,nullable=false)
+	    @Column(length=300,nullable=false)
 		private String password;
 	    @Column(nullable = false)
 	    private LocalDate dateOfBirth;
@@ -73,8 +73,8 @@ public class Customer extends BaseEntity {
 	    @Column(nullable = false)
 	    private String accountType;
 	    
-	    @Column(length=6,nullable =false)
-		private int TOTP;
+	    @Column(length=300,nullable=false)
+		private String TPIN;
 	    
 	    @OneToOne(mappedBy = "customer")
 	    @JsonManagedReference
@@ -86,8 +86,8 @@ public class Customer extends BaseEntity {
 	    	this.setAccount(account);
 	    	account.setCustomer(this);
 	    }
-	    
-	    public boolean verifyTpin(int givenTpin) {
-	        return this.TOTP == givenTpin;
-	    }
+
+		public boolean verifyTpin(String inputTpin) {
+			 return this.TPIN == inputTpin;
+		}
 }

@@ -29,7 +29,12 @@ public class RegistrationMailSender {
 		this.subject = "Bank: Verification";
 		this.to = to;
 	}
-
+	
+	public RegistrationMailSender(String to, String accountNo, String requestId, String bankName) {
+		this.message = "Dear Customer your Loan request for Request Id: "+ requestId +"is accepted \n" + "Please provide Collateral information.\n"+ "Your Account Number: "+ accountNo + "\n Best Regards \n"+ bankName;
+		this.subject = "Bank: Verification";
+		this.to = to;
+	}
 	
 	
 	

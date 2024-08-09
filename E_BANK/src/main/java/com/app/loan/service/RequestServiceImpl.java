@@ -34,6 +34,8 @@ import com.app.entity.bank.Bank;
 import com.app.entity.enums.TransType;
 import com.app.entity.payment.TransactionHistory;
 import com.app.loan.exceptions.ResourceNotFoundException;
+import com.app.miscellaneous.mail.MailSend;
+import com.app.miscellaneous.mail.RegistrationMailSender;
 
 
 @Service
@@ -117,6 +119,8 @@ public class RequestServiceImpl implements RequestService{
             if(entity.getStatus() == Status.R) {
             	entity.setStatus(Status.P);
             	reqDao.save(entity);
+            	RegistrationMailSender afterRequest = new RegistrationMailSender(entity.getAccount().getCustomer().getEmail(),entity.getAccount().getAccountNo(), entity.getRequestId(), entity.getAccount().getBank().getBankName());
+        		MailSend.sendEmail(afterRequest.getMessage(), afterRequest.getSubject(), afterRequest.getTo());
             	return new ApiResponse("Succeesfully Updated to Pending");
             }else {
             	if(entity.getStatus() == Status.A) {

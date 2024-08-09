@@ -223,7 +223,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws InvalidTpinException if the TPIN is invalid.
      */
     @Override
-    public void verifyCustomerTpin(Long customerId, int inputTpin) {
+    public void verifyCustomerTpin(Long customerId, String inputTpin) {
         Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
         
@@ -245,11 +245,11 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws ResourceNotFoundException if the customer is not found.
      */
     @Override
-    public void updateCustomerTpin(Long customerId, int newTpin) {
+    public void updateCustomerTpin(Long customerId, String newTpin) {
         Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
         
-        customer.setTOTP(newTpin);
+        customer.setTPIN(newTpin);
         customerDao.save(customer);
     }
     

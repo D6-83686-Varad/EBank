@@ -121,7 +121,7 @@ public class CustomerController {
         throw new BadRequestException("Not Found");
     }
     @PostMapping("/{customerId}/update-tpin")
-    public ResponseEntity<String> updateTpin(@PathVariable Long customerId, @RequestParam @Min(100000) @Max(999999) int newTpin) {
+    public ResponseEntity<String> updateTpin(@PathVariable Long customerId, @RequestParam @Min(100000) @Max(999999) String newTpin) {
         try {
             customerService.updateCustomerTpin(customerId, newTpin);
             return new ResponseEntity<>("TPIN updated successfully", HttpStatus.OK);
