@@ -2,7 +2,7 @@ package com.app.loan.entities;
 
 import com.app.entity.account.Account;
 import com.app.loan.idGenerator.StringPrefixedSequenceIdGenerator;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
 
@@ -12,6 +12,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -68,9 +69,9 @@ public class Loan extends BaseEntity{
      * The account associated with this loan.
      * Each loan is linked to a specific account.
      */
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name="account_id", nullable = false)
-	private Account accountId;
+	private Account account;
 	
 	
 	/**
@@ -166,7 +167,7 @@ public class Loan extends BaseEntity{
 	public Loan(Account account_id, float loanAmount, float emi, LocalDate startDate, LocalDate endDate,
 			LoanDetails loanDetails, Collateral collateralId) {
 		super();
-		this.accountId = account_id;
+		this.account = account_id;
 		this.loanAmount = loanAmount;
 		this.emi = emi;
 		this.startDate = startDate;

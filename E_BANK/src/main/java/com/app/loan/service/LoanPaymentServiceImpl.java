@@ -42,7 +42,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 		String bankid = bank.getBankBranchId();
 		Loan loanDet = loanDao.findById(loan).orElseThrow(()-> new ResourceNotFoundException("Loan Details Not Found for given Id"+ loan));
 		//Retrieve account;
-		Account loanPayerAccount =loanDet.getAccountId();
+		Account loanPayerAccount =loanDet.getAccount();
 		if(loanDet.getRemainingAmount() > 0) {
 			LoanPayment loanPayment= new LoanPayment(loanDet, (loanDet.getRemainingAmount()-loanDet.getEmi()), loanDet.getLoanAmount(), TransactionStatus.DEBIT);
 			loanDet.addLoanPayment(loanPayment);

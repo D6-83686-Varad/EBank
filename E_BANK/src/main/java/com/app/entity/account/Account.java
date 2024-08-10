@@ -38,11 +38,13 @@ import com.app.entity.enums.TransType;
 import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
 import com.app.id.generator.StringPrefixedSequenceIdGenerator;
+import com.app.loan.entities.Loan;
 import com.app.loan.entities.LoanDetails;
 import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.Request;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
@@ -109,6 +111,11 @@ public class Account extends BaseEntity {
 	@JsonBackReference
 	@JoinColumn(name="customer_id")
 	private Customer customer;
+	
+	
+	@OneToOne(mappedBy = "account", fetch = FetchType.LAZY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Loan loan;
 	
 	//Loan
 	/**

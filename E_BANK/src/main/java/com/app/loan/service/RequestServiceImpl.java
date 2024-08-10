@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.app.dao.AccountDao;
 import com.app.dao.BankDao;
 import com.app.dao.TransactionHistoryDao;
+import com.app.dto.AccountResponseDTO;
+import com.app.dto.TransactionHistoryDTO;
 import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dao.LoanDetailsDao;
@@ -231,15 +234,29 @@ public class RequestServiceImpl implements RequestService{
         }
 	}
 
+	
+
+
+
 	@Override
-	public List<Loan> getListOfLoansByAcccount(String accountNo) {
+	public AccountResponseDTO getListOfLoansByAcccount(String accountNo) {
 		// TODO Auto-generated method stub
-		Account account  = accDao.findById(accountNo).orElseThrow(()-> new ResourceNotFoundException("Given Account Not Found"));
-		List<Loan> listOfLoan = loanDao.findLoanByAccountId(account.getAccountNo());
-		if(listOfLoan.isEmpty()) {
-			return null;
-		}
-		return listOfLoan;
+		
+		Account account = accDao.findById(accountNo).orElseThrow();
+//		Account account  = accDao.findById(accountNo).orElseThrow(()-> new ResourceNotFoundException("Given Account Not Found"));
+		System.out.println("Hiii");
+//		System.out.println(account.getRequest());
+		Loan loan =account.getLoan();
+		
+		Loan listOfLoan = loanDao.findByAccountId(account.getAccountNo());
+		
+		loan.getAccount();
+		AccountResponseDTO accRes = mapper.map(listOfLoan, AccountResponseDTO.class);
+		accRes.setAccountId(account.getAccountNo());
+		
+		
+        
+	return accRes;
 	}
 
 	

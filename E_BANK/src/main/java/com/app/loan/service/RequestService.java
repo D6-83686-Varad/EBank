@@ -2,6 +2,8 @@ package com.app.loan.service;
 
 import java.util.List;
 
+import com.app.dto.AccountResponseDTO;
+import com.app.entity.account.*;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.RequestDto;
 import com.app.loan.entities.Loan;
@@ -91,6 +93,6 @@ public interface RequestService {
      */
 	ApiResponse updateToDeclined(String requestId);
 	
-	List<Loan> getListOfLoansByAcccount(String accountNo);
+	AccountResponseDTO getListOfLoansByAcccount(String accountNo);
 	
 }
