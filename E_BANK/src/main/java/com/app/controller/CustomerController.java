@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3001/")
 @RestController
 @RequestMapping("/bank/customers")
 @Validated

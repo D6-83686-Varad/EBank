@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.app.service.CustomerService;
 
 @RestController
 @RequestMapping("/account")
+@CrossOrigin(origins = "http://localhost:3001/")
 public class AccountController {
 	
 	@Autowired
@@ -63,23 +65,23 @@ public class AccountController {
 		}
 		return ResponseEntity.ok(suspendedAccounts);
 	}
-	@PatchMapping("/{accId}/updateStatusA")
+	@PatchMapping("/updateStatusA/{accId}")
 	public ResponseEntity<?> changeToActivate(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfActivatedAccount(accId));
 	}
-	@PatchMapping("/{accId}/updateStatusD")
+	@PatchMapping("/updateStatusD/{accId}")
 	public ResponseEntity<?> changeToDeactivate(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfDeactivatedAccount(accId));
 	}
-	@GetMapping("/{accId}/balance")
+	@GetMapping("/balance/{accId}")
 	public ResponseEntity<?> getBalance(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.checkBalance(accId));
 				
 	}
-	@PostMapping("/{customerId}/verify-tpin")
+	@PostMapping("/verify-tpin/{customerId}")
 	 public ResponseEntity<String> verifyTpin(@PathVariable Long customerId, @RequestParam String tpin) {
 	        try {
 	            customerService.verifyCustomerTpin(customerId, tpin);
