@@ -80,11 +80,11 @@ public class AccountSeviceImpl implements AccountSevice {
     public List<Account> getAllDeactivatedAccount() {
         List<Account> deactivatedAccounts = accountDao.getAllDeactivatedAccount();
         if (deactivatedAccounts.isEmpty()) {
-            throw new ResourceNotFoundException("There are no deactivated accounts");
+           return null;
         }
         return deactivatedAccounts;
     }
-    
+
     /**
      * Retrieves all activated accounts.
      * 

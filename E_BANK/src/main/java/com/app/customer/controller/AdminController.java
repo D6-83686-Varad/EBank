@@ -63,8 +63,6 @@ public class AdminController {
 		}catch(NullPointerException e) {
 			List<Account> emptyList = null;
 			return new ResponseEntity<>(emptyList, HttpStatus.ACCEPTED);
-		}catch(ResourceNotFoundException | InternalServerError e) {
-			return new ResponseEntity<>("Given ID Doesn`t match with record", HttpStatus.NOT_FOUND);
 		}
 		
 		
