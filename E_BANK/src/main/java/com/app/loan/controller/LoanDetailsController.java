@@ -55,6 +55,7 @@ public class LoanDetailsController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(loDeService.removeLoanDretails(id));
 	}
 	
+	
 	@GetMapping("/getAllLoansByLoanName/{loanName}")
 	public ResponseEntity<?> getLoansByLoanName(@PathVariable("loanName")String loanName){
 		return ResponseEntity.status(HttpStatus.CREATED).body(loDeService.getAllLoansByLoanName(loanName));	

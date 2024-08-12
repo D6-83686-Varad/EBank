@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import javax.sound.midi.Receiver;
 import javax.transaction.Transaction;
 
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
@@ -74,8 +75,10 @@ public class Account extends BaseEntity {
             @Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%05d") })
 	@Column(name="accNo")
 	private String accountNo;
+	
 	@Enumerated(EnumType.STRING)
 	private AccountStatus status;
+	
 	@Column(name="balance")
 	private double balance=0;
 
@@ -123,7 +126,7 @@ public class Account extends BaseEntity {
      * The list is managed by the account entity, with cascading and orphan removal enabled.
      */
 	@JsonManagedReference
-	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch =  FetchType.EAGER)
 	private List<Request>request = new ArrayList<>();
 	
 	

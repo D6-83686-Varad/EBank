@@ -13,13 +13,13 @@ import com.app.entity.enums.AccountStatus;
 
 @Repository
 public interface AccountDao extends JpaRepository<Account, String > {
-	@Query("select a from Account a where a.status=:DEACTIVATED")
+	@Query("select a from Account a where a.status= 'DEACTIVATED'")
 	List<Account>getAllDeactivatedAccount();
 	
-	@Query("select a from Account a where a.status=:SUSPENDED")
+	@Query("select a from Account a where a.status= 'SUSPENDED'")
 	List<Account>getAllSuspendedAccount();
 	
-	@Query("select a from Account a where a.status=:ACTIVATED")
+	@Query("select a from Account a where a.status= 'ACTIVATED' ")
 	List<Account>getAllActivatedAccount();
 	
 	Optional<Account>findByStatus(AccountStatus status);
@@ -29,6 +29,5 @@ public interface AccountDao extends JpaRepository<Account, String > {
 	
 	
 
-	
 
 }

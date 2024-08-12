@@ -95,7 +95,7 @@ public class AccountSeviceImpl implements AccountSevice {
     public List<Account> getAllActivatedAccount() {
         List<Account> activatedAccounts = accountDao.getAllActivatedAccount();
         if (activatedAccounts.isEmpty()) {
-            throw new ResourceNotFoundException("There are no activated accounts");
+            return null;
         }
         return activatedAccounts;
     }
@@ -171,7 +171,7 @@ public class AccountSeviceImpl implements AccountSevice {
     public List<Account> getAllSuspendedAccount() {
         List<Account> suspendedAccounts = accountDao.getAllSuspendedAccount();
         if (suspendedAccounts.isEmpty()) {
-            throw new ResourceNotFoundException("There are no suspended accounts");
+            return null;
         }
         return suspendedAccounts;
     }
