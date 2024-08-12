@@ -1,10 +1,12 @@
 package com.app.controller;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.catalina.mapper.Mapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.AccountTypeDTO;
 import com.app.dto.ApiResponse;
 import com.app.entity.account.AccountType;
+import com.app.response.dto.AccountTypeAllDetailsDto;
 import com.app.service.AccountTypeService;
 
 @RestController
@@ -29,27 +32,40 @@ public class AccountTypeController {
 	
 	@Autowired
 	private AccountTypeService accService;
-//	
+	@Autowired
+	private ModelMapper mapper;
+
 //	@Autowired(required=true)
 //	private AccountTypeService accService;
-//	
 	
 	@GetMapping
 	public ResponseEntity<?> getAllAccountType()
 	{
-		List<AccountType> accTypeList =accService.getAllAccountType();
-		if (accTypeList.isEmpty()) {
-            return ResponseEntity.status(204).body(new ApiResponse("No account types found"));
-        }
-        return ResponseEntity.ok(accTypeList);
+		try {
+			List <AccountType> accountTypes = accService.getAllAccountType();
+			if(accountTypes.isEmpty()) {
+				return new ResponseEntity<>("No Account Types available", HttpStatus.NOT_FOUND);
+			}else {
+				List<AccountTypeDTO> accTypeDto = accountTypes.stream().map(accountType->mapper.map(accountType, AccountTypeDTO.class)).collect(Collectors.toList());
+				return new ResponseEntity<>(accTypeDto, HttpStatus.ACCEPTED);
+			}
+		}catch(Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 
 	}
+	
 	@GetMapping("/{accType}")
 	public ResponseEntity<?> getAccountType(@PathVariable("accType")String accType)
-	{
-		
-        return ResponseEntity.ok(accService.getAccountType(accType));
+	{	
+		try {
+			AccountTypeAllDetailsDto accTypeAllDetails = accService.getAccountType(accType);
+			return new ResponseEntity<>(accTypeAllDetails, HttpStatus.ACCEPTED);
+		}catch(Exception e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
+	
 	@PostMapping("/add")
 	public ResponseEntity<?> addAccountType(@RequestBody @Valid AccountTypeDTO accDTO)
 	{

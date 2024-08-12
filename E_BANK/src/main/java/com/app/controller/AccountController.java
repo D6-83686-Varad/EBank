@@ -65,22 +65,26 @@ public class AccountController {
 		}
 		return ResponseEntity.ok(suspendedAccounts);
 	}
+	
 	@PatchMapping("/updateStatusA/{accId}")
 	public ResponseEntity<?> changeToActivate(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfActivatedAccount(accId));
 	}
+	
 	@PatchMapping("/updateStatusD/{accId}")
 	public ResponseEntity<?> changeToDeactivate(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfDeactivatedAccount(accId));
 	}
+	
 	@GetMapping("/balance/{accId}")
 	public ResponseEntity<?> getBalance(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.checkBalance(accId));
 				
 	}
+	
 	@PostMapping("/verify-tpin/{customerId}")
 	 public ResponseEntity<String> verifyTpin(@PathVariable Long customerId, @RequestParam String tpin) {
 	        try {

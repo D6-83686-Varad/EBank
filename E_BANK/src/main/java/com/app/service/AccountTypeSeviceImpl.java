@@ -13,6 +13,7 @@ import com.app.dto.AccountTypeDTO;
 import com.app.dto.ApiResponse;
 import com.app.entity.account.AccountType;
 import com.app.exceptions.ResourceNotFoundException;
+import com.app.response.dto.AccountTypeAllDetailsDto;
 
 @Service
 @Transactional
@@ -32,10 +33,10 @@ public class AccountTypeSeviceImpl implements AccountTypeService {
      * @throws ResourceNotFoundException if the account type is not found.
      */
     @Override
-    public AccountTypeDTO getAccountType(String accountTypeName) {
+    public AccountTypeAllDetailsDto getAccountType(String accountTypeName) {
         AccountType accountType = accountTypeDao.findByAccTypeName(accountTypeName)
                 .orElseThrow(() -> new ResourceNotFoundException("No such account type"));
-        return mapper.map(accountType, AccountTypeDTO.class);
+        return mapper.map(accountType, AccountTypeAllDetailsDto.class);
     }
 
     /**
