@@ -235,7 +235,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new ResourceNotFoundException("Account not found for the customer");
         }
 
-        if (!account.getCustomer().verifyTpin(inputTpin)) {
+        if (account.getCustomer().verifyTpin(inputTpin)) {
             throw new InvalidTpinException("Invalid TPIN provided");
         }
     }
@@ -252,7 +252,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
         
-        customer.setTPIN(newTpin);
+        customer.setTpin(newTpin);
         customerDao.save(customer);
     }
     

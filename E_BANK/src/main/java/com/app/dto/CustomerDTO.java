@@ -66,9 +66,7 @@ public class CustomerDTO {
     private String panNo;
     
     @NotNull(message = "TOTP cannot be null")
-    @Min(value = 100000, message = "TOTP must be at least 6 digits")
-    @Max(value = 999999, message = "TOTP must be at most 6 digits")
-    private String TPIN;
+    private String tpin;
     
     @NotBlank
     private String accountType;

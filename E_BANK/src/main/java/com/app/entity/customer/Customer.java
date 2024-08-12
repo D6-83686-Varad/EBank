@@ -74,7 +74,7 @@ public class Customer extends BaseEntity {
 	    private String accountType;
 	    
 	    @Column(length=300,nullable=false)
-		private String TPIN;
+		private String tpin;
 	    
 	    @OneToOne(mappedBy = "customer")
 	    @JsonManagedReference
@@ -88,6 +88,6 @@ public class Customer extends BaseEntity {
 	    }
 
 		public boolean verifyTpin(String inputTpin) {
-			 return this.TPIN == inputTpin;
+			 return this.tpin == inputTpin;
 		}
 }
