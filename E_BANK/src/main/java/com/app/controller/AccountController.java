@@ -23,7 +23,7 @@ import com.app.service.CustomerService;
 
 @RestController
 @RequestMapping("/account")
-@CrossOrigin(origins = "http://localhost:3001/")
+@CrossOrigin(origins = "http://localhost:3000/")
 public class AccountController {
 	
 	@Autowired

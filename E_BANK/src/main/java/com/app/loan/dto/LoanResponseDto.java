@@ -1,5 +1,7 @@
 package com.app.loan.dto;
 
+import java.time.LocalDate;
+
 import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -18,5 +20,11 @@ public class LoanResponseDto {
 	private float loanAmount;
 	
 	private float emi;
+	
+	private String startDate;
+	
+	private String endDate;
+	
+	private float remainingAmount;
 
 }

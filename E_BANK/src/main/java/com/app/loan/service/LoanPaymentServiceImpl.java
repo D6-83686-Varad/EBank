@@ -2,6 +2,7 @@ package com.app.loan.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -83,18 +84,26 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 			}
 		}
 	}
-	 public LoanResponseDto getLoanDetailsByAccountNo(String accountNo) {
-	        Account account = accDao.findByAccountNo(accountNo);
-	        if (account == null) {
-	            throw new ResourceNotFoundException("Account not found with account number: " + accountNo);
-	        }
-
-	        List<Loan> loan = account.getLoan();
-	        if (loan == null) {
-	            throw new ResourceNotFoundException("Loan not found for account number: " + accountNo);
-	        }
-
-	        return mapper.map(loan, LoanResponseDto.class);
+	@Override
+	public List<LoanResponseDto> getLoanDetailsByAccountNo(String accountNo) {
+	    // Fetch the Account entity by account number
+	    Account account = accDao.findByAccountNo(accountNo);
+	    if (account == null) {
+	        throw new ResourceNotFoundException("Account not found with account number: " + accountNo);
 	    }
+
+	    // Get the list of Loan entities associated with the Account
+	    List<Loan> loans = account.getLoan();
+	    if (loans == null || loans.isEmpty()) {
+	        throw new ResourceNotFoundException("No loans found for account number: " + accountNo);
+	    }
+
+	    // Convert the list of Loan entities to a list of LoanResponseDto
+	    List<LoanResponseDto> loanResponseDtos = loans.stream()
+	        .map(loan -> mapper.map(loan, LoanResponseDto.class))
+	        .collect(Collectors.toList());
+
+	    return loanResponseDtos;
+	}
 
 }
