@@ -1,5 +1,7 @@
     package com.app.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
@@ -45,5 +47,10 @@ public class BankServiceImpl implements BankService {
         return bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Bank not found"));
     }
 
+    @Override
+	public List<Bank> getAllBankDetails() {
+		// TODO Auto-generated method stub
+		return bankDao.findAll();
+	}
     
 }

@@ -2,6 +2,8 @@ package com.app.loan.entities;
 
 import com.app.entity.account.Account;
 import com.app.loan.idGenerator.StringPrefixedSequenceIdGenerator;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
@@ -69,7 +71,8 @@ public class Loan extends BaseEntity{
      * The account associated with this loan.
      * Each loan is linked to a specific account.
      */
-	@OneToOne
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JsonBackReference
 	@JoinColumn(name="account_id", nullable = false)
 	private Account account;
 	
@@ -119,7 +122,7 @@ public class Loan extends BaseEntity{
      * Each loan is associated with specific loan details.
      * For Review
      */
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name="loan_type", nullable = false)
 	private LoanDetails loanDetails;
 	
@@ -137,6 +140,7 @@ public class Loan extends BaseEntity{
      * List of loan payments associated with this loan.
      * A loan can have multiple payments associated with it.
      */
+	@JsonIgnore
 	@OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<LoanPayment> loanPayment = new ArrayList<>();
 	

@@ -1,6 +1,7 @@
 package com.app.loan.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -88,7 +89,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 	            throw new ResourceNotFoundException("Account not found with account number: " + accountNo);
 	        }
 
-	        Loan loan = account.getLoan();
+	        List<Loan> loan = account.getLoan();
 	        if (loan == null) {
 	            throw new ResourceNotFoundException("Loan not found for account number: " + accountNo);
 	        }
