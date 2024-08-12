@@ -32,10 +32,10 @@ public class Bank {
     )
     private String bankBranchId;
 
-    @Column(name = "bank_name", length = 20, nullable = false, unique = true)
+    @Column(name = "bank_name", length = 50, nullable = false, unique = true)
     private String bankName;
 
-    @Column(name = "bank_email", length = 20, nullable = false, unique = true)
+    @Column(name = "bank_email", length = 50, nullable = false, unique = true)
     private String contactEmail;
 
     // FUNDS
