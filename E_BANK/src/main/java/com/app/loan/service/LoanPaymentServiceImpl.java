@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 
 import javax.transaction.Transactional;
 
-
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.dao.AccountDao;
 import com.app.dao.BankDao;
 import com.app.dao.TransactionHistoryDao;
 import com.app.entity.account.Account;
@@ -15,6 +16,7 @@ import com.app.entity.bank.Bank;
 import com.app.entity.payment.TransactionHistory;
 import com.app.loan.dao.LoanDao;
 import com.app.loan.dto.ApiResponse;
+import com.app.loan.dto.LoanResponseDto;
 import com.app.loan.entities.Loan;
 import com.app.loan.entities.LoanPayment;
 import com.app.loan.entities.TransactionStatus;
@@ -33,6 +35,11 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 	
 	@Autowired
 	private TransactionHistoryDao transDao;
+	
+	@Autowired 
+	private AccountDao accDao;
+	@Autowired 
+	private ModelMapper mapper;
 	
 	@Override
 	public ApiResponse addPayment(String loan) {
@@ -75,5 +82,18 @@ public class LoanPaymentServiceImpl implements LoanPaymentService{
 			}
 		}
 	}
+	 public LoanResponseDto getLoanDetailsByAccountNo(String accountNo) {
+	        Account account = accDao.findByAccountNo(accountNo);
+	        if (account == null) {
+	            throw new ResourceNotFoundException("Account not found with account number: " + accountNo);
+	        }
+
+	        Loan loan = account.getLoan();
+	        if (loan == null) {
+	            throw new ResourceNotFoundException("Loan not found for account number: " + accountNo);
+	        }
+
+	        return mapper.map(loan, LoanResponseDto.class);
+	    }
 
 }
