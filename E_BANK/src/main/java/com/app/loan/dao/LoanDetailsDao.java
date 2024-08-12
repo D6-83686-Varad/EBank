@@ -17,4 +17,5 @@ public interface LoanDetailsDao extends JpaRepository<LoanDetails, String>{
 	
 	@Query("SELECT u FROM LoanDetails u WHERE u.loanName = :loanName")
 	List<Request> findLoanDetailsByLoanName(@Param("loanName")String loanName);
+	
 }

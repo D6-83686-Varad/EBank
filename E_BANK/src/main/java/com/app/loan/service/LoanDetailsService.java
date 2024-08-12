@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.LoanDetailsDto;
+import com.app.loan.entities.LoanDetails;
 import com.app.loan.entities.Request;
 
 
@@ -33,5 +34,7 @@ public interface LoanDetailsService {
      * @return An `ApiResponse` object containing the result of the operation, including a success message or error details.
      */
 	ApiResponse removeLoanDretails(String loanTypeName);
+	
 	List<Request> getAllLoansByLoanName(String loanName);
+	List<LoanDetails>getAllLoanDetails();
 }

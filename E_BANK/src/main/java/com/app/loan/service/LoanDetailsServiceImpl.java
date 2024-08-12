@@ -99,4 +99,12 @@ public class LoanDetailsServiceImpl implements LoanDetailsService{
 		
 	}
 
+
+	@Override
+	public List<LoanDetails> getAllLoanDetails() {
+		// TODO Auto-generated method stub
+		return loTyDao.findAll();
+		
+	}
+
 }
