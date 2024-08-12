@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.app.dto.PaymentDTO;
 import com.app.exceptions.ResourceNotFoundException;
 import com.app.service.PaymentService;
-@CrossOrigin(origins = "http://localhost:3001/")
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {

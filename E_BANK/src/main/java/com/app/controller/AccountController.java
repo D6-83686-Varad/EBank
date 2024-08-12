@@ -86,7 +86,7 @@ public class AccountController {
 	}
 	
 	@PostMapping("/verify-tpin/{customerId}")
-	 public ResponseEntity<String> verifyTpin(@PathVariable Long customerId, @RequestParam String tpin) {
+	 public ResponseEntity<String> verifyTpin(@PathVariable Long customerId, @RequestBody String tpin) {
 	        try {
 	            customerService.verifyCustomerTpin(customerId, tpin);
 	            return new ResponseEntity<>("TPIN verified successfully", HttpStatus.OK);
