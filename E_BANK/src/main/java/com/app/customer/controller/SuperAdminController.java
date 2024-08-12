@@ -16,15 +16,19 @@ import com.app.dto.CustomerReturnDTO;
 import com.app.entity.customer.Customer;
 import com.app.entity.enums.Role;
 import com.app.exceptions.BadRequestException;
+import com.app.service.BankService;
 import com.app.service.CustomerService;
 
 @RestController
-@RequestMapping("/bank/customers")
+@RequestMapping("/superAdmin")
 @Validated
 public class SuperAdminController {
 
 	@Autowired
     private CustomerService customerService;
+	
+	@Autowired
+	private BankService bankService;
 	
 	@GetMapping("/admins")
     public ResponseEntity<List<CustomerReturnDTO>> getAllAdmins() {
@@ -51,4 +55,9 @@ public class SuperAdminController {
         }
         throw new BadRequestException("Not Found");
     }
+    
+    @GetMapping("/getAllBankDetails")
+	public ResponseEntity<?> getBank(){
+		return ResponseEntity.status(HttpStatus.OK).body(bankService.getAllBankDetails());
+	}
 }

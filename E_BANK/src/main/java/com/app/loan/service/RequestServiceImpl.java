@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -17,6 +18,7 @@ import com.app.dao.AccountDao;
 import com.app.dao.BankDao;
 import com.app.dao.TransactionHistoryDao;
 import com.app.dto.AccountResponseDTO;
+import com.app.dto.AccountTypeDTO;
 import com.app.dto.TransactionHistoryDTO;
 import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.LoanDao;
@@ -235,28 +237,25 @@ public class RequestServiceImpl implements RequestService{
 	}
 
 	
-
-
-
 	@Override
-	public AccountResponseDTO getListOfLoansByAcccount(String accountNo) {
+	public List<Loan> getListOfLoansByAcccount(String accountNo) {
 		// TODO Auto-generated method stub
 		
-		Account account = accDao.findById(accountNo).orElseThrow();
-//		Account account  = accDao.findById(accountNo).orElseThrow(()-> new ResourceNotFoundException("Given Account Not Found"));
-		System.out.println("Hiii");
-//		System.out.println(account.getRequest());
-		Loan loan =account.getLoan();
-		
-		Loan listOfLoan = loanDao.findByAccountId(account.getAccountNo());
-		
-		loan.getAccount();
-		AccountResponseDTO accRes = mapper.map(listOfLoan, AccountResponseDTO.class);
-		accRes.setAccountId(account.getAccountNo());
-		
-		
-        
-	return accRes;
+		Optional<Account> account = accDao.findById(accountNo);
+		if(account.isPresent()) {
+			Account account2 = account.get();
+			List<Loan> loans = account2.getLoan();
+			if(loans.isEmpty()) {
+				List<Loan> acc1 = null;
+				return acc1;
+			}else {
+				
+				return loans;
+			}
+		}else {
+			List<Loan> acc1 = null;
+			return acc1;
+		}
 	}
 
 	

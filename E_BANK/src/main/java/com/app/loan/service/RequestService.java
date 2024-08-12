@@ -93,6 +93,6 @@ public interface RequestService {
      */
 	ApiResponse updateToDeclined(String requestId);
 	
-	AccountResponseDTO getListOfLoansByAcccount(String accountNo);
+	List<Loan> getListOfLoansByAcccount(String accountNo);
 	
 }

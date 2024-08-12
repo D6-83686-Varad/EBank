@@ -25,6 +25,7 @@ import javax.sound.midi.Receiver;
 import javax.transaction.Transaction;
 
 import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
@@ -88,6 +89,7 @@ public class Account extends BaseEntity {
 	
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "bankId",nullable=false)
+	@JsonIgnore
 	private Bank bank;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -116,10 +118,15 @@ public class Account extends BaseEntity {
 	private Customer customer;
 	
 	
-	@OneToOne(mappedBy = "account", fetch = FetchType.LAZY)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Loan loan;
+	@JsonManagedReference
+	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@Fetch(FetchMode.SELECT)
+    private List<Loan> loan = new ArrayList<>();
 	
+	public void addLoan(Loan loan) {
+		this.loan.add(loan);
+		loan.setAccount(this);
+	}
 	//Loan
 	/**
      * List of requests associated with the account.
@@ -127,6 +134,7 @@ public class Account extends BaseEntity {
      */
 	@JsonManagedReference
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch =  FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
 	private List<Request>request = new ArrayList<>();
 	
 	
