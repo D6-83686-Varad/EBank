@@ -77,7 +77,7 @@ public class Customer extends BaseEntity {
 		private String tpin;
 	    
 	    @OneToOne(mappedBy = "customer")
-	    @JsonManagedReference
+	    @JsonIgnore
 	    private Account account;
 
 	    

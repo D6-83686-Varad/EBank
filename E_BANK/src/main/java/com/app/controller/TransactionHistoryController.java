@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.dto.TransactionHistoryDTO;
 import com.app.service.TransactionService;
 
-@CrossOrigin(origins = "http://localhost:3001/")
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
 @RequestMapping("/transactions")
 public class TransactionHistoryController {

@@ -22,6 +22,6 @@ public interface TransactionHistoryDao extends JpaRepository<TransactionHistory,
 	 @Query("SELECT th FROM TransactionHistory th WHERE th.account.accountNo = :accountNo AND FUNCTION('MONTH', th.createdOn) = :month")
 	    List<TransactionHistory> findByAccountNoAndMonth(@Param("accountNo") String accountNo, @Param("month") int month);
 	 
-	 @Query("SELECT th FROM TransactionHistory th WHERE th.account.accountNo = :accountNo")
+	 @Query("SELECT th FROM TransactionHistory th WHERE th.account.accountNo = :accountNo ORDER BY th.createdOn DESC")
 	    List<TransactionHistory> findByAccountNo(@Param("accountNo") String accountNo);
 }

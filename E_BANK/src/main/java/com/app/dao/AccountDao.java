@@ -26,6 +26,8 @@ public interface AccountDao extends JpaRepository<Account, String > {
 	
 	@Query("SELECT u FROM Account u WHERE u.request = :request")
     Account findAccountByRequestId(@Param("request") String request);
+
+	Account findByAccountNo(String accountNo);
 	
 	
 
