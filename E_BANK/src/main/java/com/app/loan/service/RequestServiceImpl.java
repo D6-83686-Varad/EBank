@@ -27,7 +27,7 @@ import com.app.loan.dao.RequestDao;
 
 import com.app.loan.dto.RequestDto;
 import com.app.loan.dto.ApiResponse;
-
+import com.app.loan.dto.LoanDetailResponse;
 import com.app.loan.entities.Collateral;
 import com.app.loan.entities.Loan;
 import com.app.loan.entities.LoanDetails;
@@ -237,27 +237,30 @@ public class RequestServiceImpl implements RequestService{
 	}
 
 	
+	   
+
 	@Override
-	public List<Loan> getListOfLoansByAcccount(String accountNo) {
-		// TODO Auto-generated method stub
-		
-		Optional<Account> account = accDao.findById(accountNo);
-		if(account.isPresent()) {
-			Account account2 = account.get();
-			List<Loan> loans = account2.getLoan();
-			if(loans.isEmpty()) {
-				List<Loan> acc1 = null;
-				return acc1;
-			}else {
-				
-				return loans;
-			}
-		}else {
-			List<Loan> acc1 = null;
-			return acc1;
+	public List<LoanDetailResponse> getListOfLoansByAcccount(String accountNo) {
+		 Optional<Account> account = accDao.findById(accountNo);
+		    if (account.isPresent()) {
+		        Account account2 = account.get();
+		        List<Loan> loans = account2.getLoan();
+
+		        if (loans.isEmpty()) {
+		            return List.of(); // Return an empty list instead of null
+		        } else {
+		            // Assuming you have a ModelMapper instance configured
+		            ModelMapper modelMapper = new ModelMapper();
+		            return loans.stream()
+		                        .map(loan -> modelMapper.map(loan, LoanDetailResponse.class))
+		                        .collect(Collectors.toList());
+		        }
+		    } else {
+		        return List.of(); // Return an empty list instead of null
+		    }
 		}
 	}
 
 	
 
-}
+
