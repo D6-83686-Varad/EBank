@@ -1,5 +1,6 @@
 package com.app.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,12 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
                         .collect(Collectors.toList());
     }
     
-//    @Override
-//    public List<TransactionHistoryDTO> getAllTransactionHistories() {
-//    	 List<TransactionHistory> histories = transactionHistoryDao.findAll();
-//         return histories.stream()
-//                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
-//                         .collect(Collectors.toList());
+
     @Override
     public List<TransactionHistoryDTO> getAllTransactionHistories() {
         List<TransactionHistory> histories = transactionHistoryDao.findAll();
@@ -49,19 +45,19 @@ public class TransactionServiceImpl implements TransactionService {
                             TransactionHistoryDTO dto = mapper.map(history, TransactionHistoryDTO.class);
 
                             // Fetch and set additional details
-                            Account account = history.getAccount(); // Replace with actual method to get Account
+                            Account account = history.getAccount(); 
                             if (account != null) {
-                                dto.setAccountId(account.getAccountNo()); // Replace with actual getter for account ID
+                                dto.setAccountId(account.getAccountNo()); 
                             }
 
-                            Payment payment = history.getPayment(); // Replace with actual method to get Payment
+                            Payment payment = history.getPayment(); 
                             if (payment != null) {
-                                dto.setPaymentId(payment.getRefId()); // Replace with actual getter for payment ID
+                                dto.setPaymentId(payment.getRefId()); 
                             }
 
-                            LoanPayment loanPayment = history.getLoanPayment(); // Replace with actual method to get LoanPayment
+                            LoanPayment loanPayment = history.getLoanPayment(); 
                             if (loanPayment != null) {
-                               dto.setPayment_id(loanPayment.getPayment_id()); // Replace with actual getter for loan payment ID
+                               dto.setPayment_id(loanPayment.getPayment_id()); 
                             }
 
                             return dto;
@@ -78,11 +74,38 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     public List<TransactionHistoryDTO> getTransactionsByAccountNo(String accountNo) {
-    	 List<TransactionHistory> histories = transactionHistoryDao.findByAccountNo(accountNo);
-         return histories.stream()
-                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
-                         .collect(Collectors.toList());
+        // Fetch transaction histories by account number
+        List<TransactionHistory> histories = transactionHistoryDao.findByAccountNo(accountNo);
+
+        if (histories == null || histories.isEmpty()) {
+            // Handle empty result or log as necessary
+            return Collections.emptyList();
+        }
+
+        // Map each TransactionHistory to TransactionHistoryDTO and set additional details
+        return histories.stream()
+                        .map(history -> {
+                            // Map TransactionHistory to TransactionHistoryDTO
+                            TransactionHistoryDTO dto = mapper.map(history, TransactionHistoryDTO.class);
+
+                            // Fetch and set additional details
+                            if (history.getAccount() != null) {
+                                dto.setAccountId(history.getAccount().getAccountNo()); // Adjust method as needed
+                            }
+
+                            if (history.getPayment() != null) {
+                                dto.setPaymentId(history.getPayment().getRefId()); // Adjust method as needed
+                            }
+
+                            if (history.getLoanPayment() != null) {
+                                dto.setPaymentId(history.getLoanPayment().getPayment_id()); // Ensure naming consistency
+                            }
+
+                            return dto;
+                        })
+                        .collect(Collectors.toList());
     }
+
 
    
 
