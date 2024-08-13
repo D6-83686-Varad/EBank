@@ -107,13 +107,6 @@ public class AdminController {
 	public ResponseEntity<?> changeToDeactivate(@PathVariable("accId") String accId) {
 		return ResponseEntity.ok(accService.changeStatusOfDeactivatedAccount(accId));
 	}
-	
-
-    @GetMapping("/getAllCustomers")
-    public ResponseEntity<List<CustomerReturnDTO>> getAllCustomers() {
-        List<CustomerReturnDTO> customers = customerService.getAllCustomers();
-        return new ResponseEntity<>(customers, HttpStatus.OK);
-    }
     
     @GetMapping("/admins")
     public ResponseEntity<List<CustomerReturnDTO>> getAllAdmins() {

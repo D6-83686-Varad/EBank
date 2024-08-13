@@ -57,6 +57,12 @@ public class SuperAdminController {
         throw new BadRequestException("Not Found");
     }
     
+    @GetMapping("/getAllCustomers")
+    public ResponseEntity<List<CustomerReturnDTO>> getAllCustomers() {
+        List<CustomerReturnDTO> customers = customerService.getAllCustomers();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+    
     @GetMapping("/getAllBankDetails")
 	public ResponseEntity<?> getBank(){
 		return ResponseEntity.status(HttpStatus.OK).body(bankService.getAllBankDetails());
