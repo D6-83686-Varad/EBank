@@ -133,7 +133,7 @@ public class CustomerController {
 	    @PutMapping("/updatePassword/{id}")
 	    public ResponseEntity<String> updateCustomerPassword(
 	            @PathVariable Long id,
-	            @RequestParam @NotNull(message = "Password must not be empty") String password){
+	            @RequestBody String password){
 	           String response =  customerService.updateCustomerPassword(id , password);
 	        return new ResponseEntity<>(response, HttpStatus.OK);
 	    }

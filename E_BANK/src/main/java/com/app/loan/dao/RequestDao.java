@@ -23,5 +23,7 @@ public interface RequestDao extends JpaRepository<Request, String>{
 	@Query("SELECT u FROM Request u WHERE u.status = 'D'")
 	List<Request> findAllByStatusWithDeclined();
 
+	List<Request> findByAccountAccountNo(String accountNo);
+
 
 }

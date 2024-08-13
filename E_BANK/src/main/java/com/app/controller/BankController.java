@@ -37,20 +37,20 @@ public class BankController {
 	@PostMapping("/add")
 	public ResponseEntity<?> addBanks(@RequestBody @Valid BankDTO bank)
 	{
-		logger.info("Entered into Bank Add");
+//		logger.info("Entered into Bank Add");
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED).body(bankService.addBank(bank));
 		}catch(ResourceNotFoundException e) {
-			logger.warn("Resource Not Found");
+//			logger.warn("Resource Not Found");
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		}catch(IllegalArgumentException  | HttpMessageNotReadableException  e) {
-			logger.warn("Illegal Argument Exception");
+//			logger.warn("Illegal Argument Exception");
 			return new ResponseEntity<>("Error reading arguments", HttpStatus.BAD_REQUEST);
 		}catch(RuntimeException e) {
-			logger.error("Bank Exists Already"+ bank.getBankName());
+//			logger.error("Bank Exists Already"+ bank.getBankName());
 			return new ResponseEntity<>("Bank Already Exists !!!!", HttpStatus.BAD_REQUEST);
 		}finally {
-			logger.info("Existed from bank add");
+//			logger.info("Existed from bank add");
 		}
 		
 	}
