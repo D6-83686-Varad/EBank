@@ -25,6 +25,8 @@ public class TransactionHistoryDTO {
     private String receiverAccountNo;
     private String accountId; // Simplified to just the ID
     private String paymentId; // Simplified to just the ID
+    private String payment_id;
+	
 
 }
 

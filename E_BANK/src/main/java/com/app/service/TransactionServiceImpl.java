@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.app.dao.TransactionHistoryDao;
 import com.app.dto.TransactionHistoryDTO;
+import com.app.entity.account.Account;
+import com.app.entity.payment.Payment;
 import com.app.entity.payment.TransactionHistory;
+import com.app.loan.entities.LoanPayment;
 
 @Service
 @Transactional
@@ -31,13 +34,41 @@ public class TransactionServiceImpl implements TransactionService {
                         .collect(Collectors.toList());
     }
     
+//    @Override
+//    public List<TransactionHistoryDTO> getAllTransactionHistories() {
+//    	 List<TransactionHistory> histories = transactionHistoryDao.findAll();
+//         return histories.stream()
+//                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
+//                         .collect(Collectors.toList());
     @Override
     public List<TransactionHistoryDTO> getAllTransactionHistories() {
-    	 List<TransactionHistory> histories = transactionHistoryDao.findAll();
-         return histories.stream()
-                         .map(history -> mapper.map(history, TransactionHistoryDTO.class))
-                         .collect(Collectors.toList());
+        List<TransactionHistory> histories = transactionHistoryDao.findAll();
+        return histories.stream()
+                        .map(history -> {
+                            // Map TransactionHistory to TransactionHistoryDTO
+                            TransactionHistoryDTO dto = mapper.map(history, TransactionHistoryDTO.class);
+
+                            // Fetch and set additional details
+                            Account account = history.getAccount(); // Replace with actual method to get Account
+                            if (account != null) {
+                                dto.setAccountId(account.getAccountNo()); // Replace with actual getter for account ID
+                            }
+
+                            Payment payment = history.getPayment(); // Replace with actual method to get Payment
+                            if (payment != null) {
+                                dto.setPaymentId(payment.getRefId()); // Replace with actual getter for payment ID
+                            }
+
+                            LoanPayment loanPayment = history.getLoanPayment(); // Replace with actual method to get LoanPayment
+                            if (loanPayment != null) {
+                               dto.setPayment_id(loanPayment.getPayment_id()); // Replace with actual getter for loan payment ID
+                            }
+
+                            return dto;
+                        })
+                        .collect(Collectors.toList());
     }
+    
     @Override
     public List<TransactionHistoryDTO> getTransactionsByAccountNoAndMonth(String accountNo, int month) {
     	 List<TransactionHistory> histories = transactionHistoryDao.findByAccountNoAndMonth(accountNo, month);

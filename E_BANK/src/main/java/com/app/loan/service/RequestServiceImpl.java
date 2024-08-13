@@ -168,13 +168,15 @@ public class RequestServiceImpl implements RequestService{
               	float interest = entity.getLoanAmount()*entity.getLoanDuration()*(entity.getDetails().getInterestRate()/100);
               	Loan loan = new Loan(account, (entity.getLoanAmount()+interest), ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), LocalDate.now(), LocalDate.now().plusMonths(entity.getLoanDuration()), loanDetails, collateral );
               	Loan forLoanId = loanDao.save(loan);
-              	forLoanId.addLoanPayment(new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT));
+              	LoanPayment loanPayment = new LoanPayment(forLoanId, ((entity.getLoanAmount()+interest)/entity.getLoanDuration()), (entity.getLoanAmount()+interest), TransactionStatus.CREDIT);
+              	forLoanId.addLoanPayment(loanPayment);
                 
 
               	//Fund transfer to account
               	account.setBalance(account.getBalance()+entity.getLoanAmount());
                 TransactionHistory transactionHistory  = new TransactionHistory();
                 account.addTransaction(entity, loanDetails,transactionHistory);
+                transactionHistory.setLoanPayment(loanPayment);
                 
                 //Bank fund management
               	Bank bank = account.getBank();
@@ -239,26 +241,46 @@ public class RequestServiceImpl implements RequestService{
 	
 	   
 
-	@Override
-	public List<LoanDetailResponse> getListOfLoansByAcccount(String accountNo) {
-		 Optional<Account> account = accDao.findById(accountNo);
-		    if (account.isPresent()) {
-		        Account account2 = account.get();
-		        List<Loan> loans = account2.getLoan();
 
-		        if (loans.isEmpty()) {
-		            return List.of(); // Return an empty list instead of null
-		        } else {
-		            // Assuming you have a ModelMapper instance configured
-		            ModelMapper modelMapper = new ModelMapper();
-		            return loans.stream()
-		                        .map(loan -> modelMapper.map(loan, LoanDetailResponse.class))
-		                        .collect(Collectors.toList());
-		        }
-		    } else {
-		        return List.of(); // Return an empty list instead of null
-		    }
-		}
+	
+
+
+
+@Override
+public List<LoanDetailResponse> getListOfLoansByAccount(String accountNo) {
+    Optional<Account> account = accDao.findById(accountNo);
+    if (account.isPresent()) {
+        Account account2 = account.get();
+        List<Loan> loans = account2.getLoan();
+
+        if (loans.isEmpty()) {
+            return List.of(); // Return an empty list instead of null
+        } else {
+            // Assuming you have a ModelMapper instance configured
+            ModelMapper modelMapper = new ModelMapper();
+            return loans.stream()
+                        .map(loan -> {
+                            // Map loan to LoanDetailResponse
+                            LoanDetailResponse response = modelMapper.map(loan, LoanDetailResponse.class);
+                            
+                            // Fetch and set collateral details
+                            Collateral collateral = loan.getCollateralId(); // Replace with actual method to fetch collateral
+                            if (collateral != null) {
+                                response.setAsset(collateral.getAsset()); // Replace with actual getter
+                                response.setValue(collateral.getValue()); // Replace with actual getter
+                            } else {
+                                response.setAsset("No Asset"); // or any default value
+                                response.setValue("No Asset"); // or any default value
+                            }
+                            
+                            return response;
+                        })
+                        .collect(Collectors.toList());
+        }
+    } else {
+        return List.of(); // Return an empty list instead of null
+    }
+}
 	}
 
 	
