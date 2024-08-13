@@ -1,6 +1,7 @@
 package com.app.customer.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,8 +64,20 @@ public class SuperAdminController {
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     
-    @GetMapping("/getAllBankDetails")
+    @GetMapping("/getAllCustomersOnly")
+    public ResponseEntity<List<CustomerReturnDTO>> getAllCustomersOnly() {
+        List<CustomerReturnDTO> customers = customerService.getAllCustomersOnly();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/getAllCustomersDisabled")
+    public ResponseEntity<List<CustomerReturnDTO>> getAllDisabled() {
+        List<CustomerReturnDTO> customers = customerService.getAllDisabled();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+    
+    @GetMapping("/getBankDetails")
 	public ResponseEntity<?> getBank(){
-		return ResponseEntity.status(HttpStatus.OK).body(bankService.getAllBankDetails());
+		return ResponseEntity.status(HttpStatus.OK).body(bankService.getBankDetails());
 	}
 }

@@ -35,4 +35,8 @@ public interface CustomerService {
 
 	String updateCustomerPassword(Long customerId, String newPassword);
 
+	List<CustomerReturnDTO> getAllDisabled();
+
+	List<CustomerReturnDTO> getAllCustomersOnly();
+
 }

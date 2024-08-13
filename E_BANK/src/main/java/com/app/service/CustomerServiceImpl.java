@@ -124,6 +124,16 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerReturnDTO> getAllAdmins() {
         return customerDao.findByRole(Role.ROLE_ADMIN).stream().map(customer -> mapper.map(customer, CustomerReturnDTO.class)).collect(Collectors.toList());
     }
+    
+    @Override
+    public List<CustomerReturnDTO> getAllDisabled() {
+        return customerDao.findByRole(Role.ROLE_DISABLED).stream().map(customer -> mapper.map(customer, CustomerReturnDTO.class)).collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<CustomerReturnDTO> getAllCustomersOnly() {
+        return customerDao.findByRole(Role.ROLE_CUSTOMER).stream().map(customer -> mapper.map(customer, CustomerReturnDTO.class)).collect(Collectors.toList());
+    }
 
     /**
      * Retrieves all customers.
