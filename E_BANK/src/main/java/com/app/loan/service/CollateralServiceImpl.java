@@ -1,14 +1,20 @@
 package com.app.loan.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.loan.dao.CollateralDao;
 import com.app.loan.dao.RequestDao;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.CollateralDto;
+import com.app.loan.dto.CollateralResponseDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.entities.Collateral;
 import com.app.loan.entities.Request;
 
@@ -31,7 +37,8 @@ public class CollateralServiceImpl implements CollateralService{
     // ModelMapper for mapping between DTOs and entities
 	@Autowired
 	private ModelMapper mapper;
-
+	 @Autowired
+	    private CollateralDao collateralDao;
 	
 	 /**
      * Adds a new collateral to the system.
@@ -58,7 +65,22 @@ public class CollateralServiceImpl implements CollateralService{
         // Return a response indicating that the collateral was successfully added
 		return new ApiResponse("Added a new Collateral");
 	}
+
+	@Override
+	public List<CollateralResponseDto> getAllCollateralsByRequestId(String requestId) {
+		List<Collateral> collateral = collateralDao.findByRequestRequestId(requestId);
+		
+		return collateral.stream().map(collaterals -> {
+	        CollateralResponseDto dto = new CollateralResponseDto();
+	        dto.setRequestId(collaterals.getRequest().getRequestId());
+	        dto.setAsset(collaterals.getAsset());
+	        dto.setValue(Float.parseFloat(collaterals.getValue()));
+	        dto.setDescription(collaterals.getDescription());
+	        
+	        return dto;
+	    }).collect(Collectors.toList());
+	}
+	}
+
 	
-	
-	
-}
+

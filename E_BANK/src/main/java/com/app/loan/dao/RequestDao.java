@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.app.loan.entities.Request;
 
@@ -22,6 +23,7 @@ public interface RequestDao extends JpaRepository<Request, String>{
 	
 	@Query("SELECT u FROM Request u WHERE u.status = 'D'")
 	List<Request> findAllByStatusWithDeclined();
-
+	
+	 List<Request> findByAccountAccountNo(String accountNo);
 
 }

@@ -1,10 +1,12 @@
 package com.app.loan.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.RequestDto;
-
+import com.app.loan.dto.RequestListDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.entities.Request;
 
 
@@ -90,5 +92,8 @@ public interface RequestService {
      * @return A string message indicating the result of the operation.
      */
 	ApiResponse updateToDeclined(String requestId);
+	
+	List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo);
+
 	
 }

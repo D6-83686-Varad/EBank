@@ -1,16 +1,21 @@
 package com.app.loan.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.loan.dto.CollateralDto;
+import com.app.loan.dto.CollateralResponseDto;
+import com.app.loan.entities.Collateral;
 import com.app.loan.service.CollateralService;
 
 @RestController
@@ -36,7 +41,11 @@ public class LoanCollateralController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(collService.addCollateral(collateral));
 	}
 	
-	
+	 @GetMapping("/getCollateralsByRequestId/{requestId}")
+	    public ResponseEntity<List<CollateralResponseDto>> getCollateralsByRequestId(@PathVariable String requestId) {
+	        List<CollateralResponseDto> collaterals = collService.getAllCollateralsByRequestId(requestId);
+	        return ResponseEntity.status(HttpStatus.OK).body(collaterals);
+	    }
 	// Future Enhancement:
     // Once a customer adds collateral, an administrator will review the collateral details.
     // The administrator will then trigger a method to create a new entry in the Loan table

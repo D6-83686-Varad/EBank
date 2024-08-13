@@ -1,7 +1,11 @@
 package com.app.loan.service;
 
+import java.util.List;
+
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.CollateralDto;
+import com.app.loan.dto.CollateralResponseDto;
+import com.app.loan.entities.Collateral;
 
 
 /**
@@ -20,4 +24,5 @@ public interface CollateralService {
      * @return An `ApiResponse` object containing the result of the operation, including any messages or status information.
      */
 	ApiResponse addCollateral(CollateralDto collateralDto);
+	List<CollateralResponseDto> getAllCollateralsByRequestId(String requestId);
 }

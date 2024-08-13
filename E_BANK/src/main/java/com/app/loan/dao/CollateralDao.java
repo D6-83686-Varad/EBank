@@ -1,6 +1,6 @@
 package com.app.loan.dao;
 
-//import java.util.List;
+import java.util.List;
 //
 //import java.util.Optional;
 
@@ -14,4 +14,7 @@ import com.app.loan.entities.Request;
 public interface CollateralDao extends JpaRepository<Collateral, String>{
 	@Query("SELECT c FROM Collateral c WHERE c.request = :request")
     Collateral findByRequest(@Param("request") Request request);
+
+	List<Collateral> findByRequestRequestId(String requestId);
+
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.loan.dto.RequestDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.entities.Request;
 import com.app.loan.service.RequestService;
 
@@ -68,7 +69,12 @@ public class LoanRequestController {
 		}
 		return ResponseEntity.ok(accList);
 	}
-	
+	@GetMapping("/account/{accountNo}")
+    public ResponseEntity<List<RequestResponseDto>> getRequestsByAccountNo(@PathVariable String accountNo) {
+        List<RequestResponseDto> requests = reqService.getAllRequestsByAccountNo(accountNo);
+        return ResponseEntity.status(HttpStatus.OK).body(requests);
+//        return new ResponseEntity.sta(requests, HttpStatus.OK).;
+    }
 	
 	/**
 	 * End-point for administrators to retrieve all loan requests with status "approved".

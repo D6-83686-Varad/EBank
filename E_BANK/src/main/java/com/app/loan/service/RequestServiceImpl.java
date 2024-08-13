@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -20,8 +21,10 @@ import com.app.loan.dao.LoanDetailsDao;
 import com.app.loan.dao.RequestDao;
 
 import com.app.loan.dto.RequestDto;
+import com.app.loan.dto.RequestListDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.dto.ApiResponse;
-
+import com.app.loan.dto.LoanDetailsDto;
 import com.app.loan.entities.Collateral;
 import com.app.loan.entities.Loan;
 import com.app.loan.entities.LoanDetails;
@@ -197,31 +200,70 @@ public class RequestServiceImpl implements RequestService{
         }
 	}
 
-
-
 	@Override
 	public ApiResponse updateToDeclined(String requestId) {
 		// TODO Auto-generated method stub
-		Optional<Request> optionalEntity = reqDao.findById(requestId);
-        if (optionalEntity.isPresent()) {
-            Request entity = optionalEntity.get();
-            if(entity.getStatus()==Status.P | entity.getStatus() == Status.R) {
-            	entity.setStatus(Status.D);
-            	reqDao.save(entity);
-            	return new ApiResponse("Request is declined..  ");
-            }else {
-            	if(entity.getStatus() == Status.A) {
-            		return new ApiResponse("Can't delete approved requests");
-            	}else {
-            		return new ApiResponse("Given request is already marked as declined");
-            	}
-            }
-        } else {
-            // Handle the case where the entity is not found
-            throw new RuntimeException("Entity not found with id: " + requestId);
-        }
+		return null;
 	}
 
 	
-
+@Override
+public List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo) {
+    List<Request> requests = reqDao.findByAccountAccountNo(accountNo);
+    
+    // Convert List<Request> to List<RequestResponseDto>
+    return requests.stream().map(request -> {
+        RequestResponseDto dto = new RequestResponseDto();
+        dto.setRequestId(request.getRequestId());
+        dto.setLoanAmount(request.getLoanAmount());
+        dto.setLoanDuration(request.getLoanDuration());
+        dto.setLoanName(request.getDetails().getLoanName());
+        dto.setStatus(request.getStatus());
+        dto.setCreatedOn(request.getCreatedOn());
+        dto.setUpdatedOn(request.getUpdatedOn());
+        return dto;
+    }).collect(Collectors.toList());
 }
+}
+
+	//@Override
+//	public ApiResponse updateToDeclined(String requestId) {
+//		// TODO Auto-generated method stub
+//		Optional<Request> optionalEntity = reqDao.findById(requestId);
+//        if (optionalEntity.isPresent()) {
+//            Request entity = optionalEntity.get();
+//            if(entity.getStatus()==Status.P | entity.getStatus() == Status.R) {
+//            	entity.setStatus(Status.D);
+//            	reqDao.save(entity);
+//            	return new ApiResponse("Request is declined..  ");
+//            }else {
+//            	if(entity.getStatus() == Status.A) {
+//            		return new ApiResponse("Can't delete approved requests");
+//            	}else {
+//            		return new ApiResponse("Given request is already marked as declined");
+//            	}
+//            }
+//        } else {
+//            // Handle the case where the entity is not found
+//            throw new RuntimeException("Entity not found with id: " + requestId);
+//        }
+//	}
+
+//	
+//@Override
+//public ApiResponse addNewLoanDetails(LoanDetailsDto loanDetails) {
+//	
+//    // Check if the loan type already exists in the database
+//	if(loTyDao.existsById(loanDetails.getLoanName())) {
+//		return new ApiResponse("Given type already present in table");
+//	}else {
+//        // Map the DTO to a LoanDetails entity
+//		LoanDetails loanDetailsC = mapper.map(loanDetails, LoanDetails.class);
+//        // Save the new LoanDetails entity to the database
+//		loTyDao.save(loanDetailsC);
+//        // Return a success response
+//		return new ApiResponse("LoanDetails Created");
+//	}
+//	
+//}
+
