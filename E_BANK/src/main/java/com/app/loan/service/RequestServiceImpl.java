@@ -26,6 +26,7 @@ import com.app.loan.dao.LoanDetailsDao;
 import com.app.loan.dao.RequestDao;
 
 import com.app.loan.dto.RequestDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.LoanDetailResponse;
 import com.app.loan.entities.Collateral;
@@ -280,7 +281,27 @@ public List<LoanDetailResponse> getListOfLoansByAccount(String accountNo) {
     } else {
         return List.of(); // Return an empty list instead of null
     }
+}@Override
+public List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo) {
+    List<Request> requests = reqDao.findByAccountAccountNo(accountNo);
+    
+    // Convert List<Request> to List<RequestResponseDto>
+    return requests.stream().map(request -> {
+        RequestResponseDto dto = new RequestResponseDto();
+        dto.setRequestId(request.getRequestId());
+        dto.setLoanAmount(request.getLoanAmount());
+        dto.setLoanDuration(request.getLoanDuration());
+        dto.setLoanName(request.getDetails().getLoanName());
+        dto.setStatus(request.getStatus());
+        dto.setCreatedOn(request.getCreatedOn());
+        dto.setUpdatedOn(request.getUpdatedOn());
+        return dto;
+    }).collect(Collectors.toList());
 }
+
+
+
+
 	}
 
 	

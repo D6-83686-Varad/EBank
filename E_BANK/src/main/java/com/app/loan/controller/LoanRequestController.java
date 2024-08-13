@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.loan.dto.RequestDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.entities.Request;
 import com.app.loan.service.RequestService;
 @CrossOrigin(origins = "http://localhost:3001/")
@@ -183,6 +184,13 @@ public class LoanRequestController {
 		
 		return ResponseEntity.ok(reqService.getListOfLoansByAccount(id));
 	}
+	
+	
+	@GetMapping("/account/{accountNo}")
+    public ResponseEntity<List<RequestResponseDto>> getRequestsByAccountNo(@PathVariable String accountNo) {
+        List<RequestResponseDto> requests = reqService.getAllRequestsByAccountNo(accountNo);
+        return new ResponseEntity<>(requests, HttpStatus.OK);
+    }
 	
 	
 }

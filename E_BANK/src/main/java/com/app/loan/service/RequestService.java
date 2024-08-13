@@ -7,6 +7,7 @@ import com.app.entity.account.*;
 import com.app.loan.dto.ApiResponse;
 import com.app.loan.dto.LoanDetailResponse;
 import com.app.loan.dto.RequestDto;
+import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.entities.Loan;
 import com.app.loan.entities.Request;
 
@@ -97,5 +98,7 @@ public interface RequestService {
 	
 
 	List<LoanDetailResponse> getListOfLoansByAccount(String accountNo);
+
+	List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo);
 	
 }
