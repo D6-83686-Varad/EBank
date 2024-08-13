@@ -72,6 +72,12 @@ public class AccountController {
 		return ResponseEntity.ok(accService.changeStatusOfActivatedAccount(accId));
 	}
 	
+	@PatchMapping("/updateStatusS/{accId}")
+	public ResponseEntity<?> changeToActivateSuspended(@PathVariable("accId")String accId)
+	{
+		return ResponseEntity.ok(accService.changeStatusOfSuspendedAccount(accId));
+	}  
+	
 	@PatchMapping("/updateStatusD/{accId}")
 	public ResponseEntity<?> changeToDeactivate(@PathVariable("accId")String accId)
 	{

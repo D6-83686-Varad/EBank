@@ -121,7 +121,7 @@ public class CustomerController {
 	    }
 
 
-	    @PutMapping("/{id}")
+	    @PutMapping("/updateEmailPhone/{id}")
 	    public ResponseEntity<String> updateCustomerEmailAndPhone(
 	            @PathVariable Long id,
 	            @RequestParam(required = false) @Email(message = "Invalid email format") String email,
@@ -152,7 +152,7 @@ public class CustomerController {
 	    }
 	    
 
-	    @PostMapping("/{customerId}/update-tpin")
+	    @PostMapping("/updatetpin/{customerId}")
 	    public ResponseEntity<String> updateTpin(@PathVariable Long customerId, @RequestParam @Min(100000) @Max(999999) String newTpin) {
 	        try {
 	            customerService.updateCustomerTpin(customerId, newTpin);
