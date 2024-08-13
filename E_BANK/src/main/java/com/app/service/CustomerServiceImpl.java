@@ -239,15 +239,9 @@ public class CustomerServiceImpl implements CustomerService {
     public void verifyCustomerTpin(Long customerId, String inputTpin) {
         Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
-        
-        Account account = customer.getAccount();
-        if (account == null) {
-            throw new ResourceNotFoundException("Account not found for the customer");
-        }
-
-        if (account.getCustomer().verifyTpin(inputTpin)) {
-            throw new InvalidTpinException("Invalid TPIN provided");
-        }
+        if(!customer.getTpin().equals(inputTpin))
+        	throw new InvalidTpinException("Invalid TPIN provided");
+        return;	
     }
 
     /**
