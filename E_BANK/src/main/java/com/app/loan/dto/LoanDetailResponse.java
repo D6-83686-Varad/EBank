@@ -19,5 +19,7 @@ public class LoanDetailResponse {
     private int tenure;
 	private String asset;
 	private String value;
+	private String startDate;
+	private String endDate;
 	
 }

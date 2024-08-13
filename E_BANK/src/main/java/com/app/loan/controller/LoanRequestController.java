@@ -181,7 +181,7 @@ public class LoanRequestController {
 	@GetMapping("/listOfRequest/{id}")
 	public ResponseEntity<?> getListOfLoansByAccountId(@PathVariable("id") String id){
 		
-		return ResponseEntity.ok(reqService.getListOfLoansByAcccount(id));
+		return ResponseEntity.ok(reqService.getListOfLoansByAccount(id));
 	}
 	
 	
