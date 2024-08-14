@@ -98,7 +98,7 @@ public class RequestServiceImpl implements RequestService{
 	@Override
 	public List<LoanDetailResponse> viewPending() {
 	    // Fetch all Request entities and handle potential null
-	    List<Request> listRequested = Optional.ofNullable(reqDao.findAll()).orElse(Collections.emptyList());
+	    List<Request> listRequested = Optional.ofNullable(reqDao.findAllByStatusWithPending()).orElse(Collections.emptyList());
 	    
 	    // Map each Request to RequestResponseDto
 	    List<LoanDetailResponse> dto = listRequested.stream()
@@ -137,7 +137,7 @@ public class RequestServiceImpl implements RequestService{
 	@Override
 	public List<RequestResponseDto> viewRequested() {
 	    // Fetch all Request entities
-	    List<Request> listRequested = reqDao.findAll();
+	    List<Request> listRequested = reqDao.findAllByStatusWithRequested();
 	    
 	    // Map each Request to RequestResponseDto
 	    List<RequestResponseDto> dto = listRequested.stream()
@@ -166,7 +166,7 @@ public class RequestServiceImpl implements RequestService{
 	@Override
 	public List<LoanDetailResponse> viewDeclined() {
 	    // Fetch all Request entities and handle potential null
-	    List<Request> listRequested = Optional.ofNullable(reqDao.findAll()).orElse(Collections.emptyList());
+	    List<Request> listRequested = Optional.ofNullable(reqDao.findAllByStatusWithDeclined()).orElse(Collections.emptyList());
 	    
 	    // Filter for declined requests
 	    List<LoanDetailResponse> dto = listRequested.stream()
