@@ -19,7 +19,8 @@ public interface LoanDao extends JpaRepository<Loan, String>{
 	@Query("SELECT l FROM Loan l join fetch l.account a WHERE a.accountNo = :accountId")
 	Loan findByAccountId(@Param("accountId") String accountId);
 	
-
+	@Query("SELECT l FROM Loan l WHERE l.account.accountNo IN :accountNumbers")
+    List<Loan> findLoansByAccountNumbers(@Param("accountNumbers") List<String> accountNumbers);
 
 	
 }

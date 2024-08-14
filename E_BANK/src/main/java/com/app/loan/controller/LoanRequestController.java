@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.loan.dto.LoanDetailResponse;
 import com.app.loan.dto.RequestDto;
 import com.app.loan.dto.RequestResponseDto;
 import com.app.loan.entities.Request;
@@ -43,7 +44,7 @@ public class LoanRequestController {
 	public ResponseEntity<?> getAllRequestedAccount()
 	{
 		System.out.println("Hii");
-		List<Request> accList =reqService.viewRequested();
+		List<RequestResponseDto> accList =reqService.viewRequested();
 		if(accList.isEmpty())
 		{
 			return ResponseEntity.noContent().build();
@@ -63,7 +64,7 @@ public class LoanRequestController {
 	@GetMapping("/pending")
 	public ResponseEntity<?> getAllPendingAccount()
 	{
-		List<Request> accList =reqService.viewPending();
+		List<LoanDetailResponse> accList =reqService.viewPending();
 		if(accList.isEmpty())
 		{
 			return ResponseEntity.noContent().build();
@@ -103,7 +104,7 @@ public class LoanRequestController {
 	@GetMapping("/declined")
 	public ResponseEntity<?> getAllDeclinedAccount()
 	{
-		List<Request> accList =reqService.viewDeclined();
+		List<LoanDetailResponse> accList =reqService.viewDeclined();
 		if(accList.isEmpty())
 		{
 			return ResponseEntity.noContent().build();
@@ -191,6 +192,11 @@ public class LoanRequestController {
         List<RequestResponseDto> requests = reqService.getAllRequestsByAccountNo(accountNo);
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
+	
+	 @GetMapping("/details")
+	    public List<LoanDetailResponse> getAllLoanDetails() {
+	        return reqService.getAllRequests();
+	    }
 	
 	
 }

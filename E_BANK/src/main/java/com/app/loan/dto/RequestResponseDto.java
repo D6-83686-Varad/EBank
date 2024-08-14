@@ -42,6 +42,10 @@ public class RequestResponseDto {
     @NotNull(message = "Status cannot be null")
 	private Status status ;
     
+    private int tenure;
+    
+    private String accountNo;
+    
     
 
 

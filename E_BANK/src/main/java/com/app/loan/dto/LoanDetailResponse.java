@@ -1,5 +1,7 @@
 package com.app.loan.dto;
 
+import com.app.loan.entities.Status;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,5 +23,8 @@ public class LoanDetailResponse {
 	private String value;
 	private String startDate;
 	private String endDate;
+	private String accountNo;
+	private String status ;
+	private String requestId;
 	
 }

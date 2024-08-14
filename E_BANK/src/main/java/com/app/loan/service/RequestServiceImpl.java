@@ -1,8 +1,7 @@
 package com.app.loan.service;
 
 import java.time.LocalDate;
-
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,16 +93,68 @@ public class RequestServiceImpl implements RequestService{
 		
 	}
 
-	@Override
-	public List<Request> viewPending() {
-		// TODO Auto-generated method stub
-		return reqDao.findAllByStatusWithPending();
-	}
+
 	
 	@Override
-	public List<Request> viewRequested() {
-		// TODO Auto-generated method stub
-		return reqDao.findAllByStatusWithRequested();
+	public List<LoanDetailResponse> viewPending() {
+	    // Fetch all Request entities and handle potential null
+	    List<Request> listRequested = Optional.ofNullable(reqDao.findAll()).orElse(Collections.emptyList());
+	    
+	    // Map each Request to RequestResponseDto
+	    List<LoanDetailResponse> dto = listRequested.stream()
+	        .map(req -> {
+	        	LoanDetailResponse response = new LoanDetailResponse(); // Create a new instance of RequestResponseDto
+	            
+	            // Populate fields in RequestResponseDto from Request object
+	            response.setAccountNo(req.getAccount().getAccountNo());
+	            response.setLoanAmount(req.getLoanAmount());
+	           response.setRequestId(req.getRequestId());
+	           response.setStatus(req.getStatus().name());
+	           
+	            response.setLoanName(req.getDetails().getLoanName()); // Assuming `getDetails()` returns an object with `getLoanName()`
+	           
+	            response.setTenure(req.getDetails().getTenure()); // Assuming `getDetails()` returns an object with `getTenure()`
+	            
+	            // Handle collateral details
+	            List<Collateral> collaterals = req.getCollaterals(); // Fetch the list of Collateral associated with the Request
+	            
+	            if (collaterals != null && !collaterals.isEmpty()) {
+	                Collateral firstCollateral = collaterals.get(0); // Assuming you want to use the first collateral
+	                response.setAsset(firstCollateral.getAsset()); // Set asset from the first Collateral
+	                response.setValue(firstCollateral.getValue()); // Set value from the first Collateral
+	            } else {
+	                response.setAsset("N/A"); // Or handle cases where no collateral is present
+	                response.setValue("N/A");
+	            }
+	            
+	            return response; // Return the populated RequestResponseDto
+	        })
+	        .collect(Collectors.toList()); // Collect results into a List
+	    
+	    return dto;
+	}
+
+	@Override
+	public List<RequestResponseDto> viewRequested() {
+	    // Fetch all Request entities
+	    List<Request> listRequested = reqDao.findAll();
+	    
+	    // Map each Request to RequestResponseDto
+	    List<RequestResponseDto> dto = listRequested.stream()
+	        .map(req -> {
+	            RequestResponseDto response = new RequestResponseDto(); // Create a new instance of RequestResponseDto
+	            response.setLoanAmount(req.getLoanAmount());
+	            response.setLoanName(req.getDetails().getLoanName());
+	            response.setRequestId(req.getRequestId());
+	            response.setStatus(req.getStatus());
+	            response.setTenure(req.getDetails().getTenure());
+	            response.setAccountNo(req.getAccount().getAccountNo());
+	           
+	            return response; // Return the populated RequestResponseDto
+	        })
+	        .collect(Collectors.toList()); // Collect results into a List
+	    
+	    return dto;
 	}
 
 	@Override
@@ -113,9 +164,42 @@ public class RequestServiceImpl implements RequestService{
 	}
 
 	@Override
-	public List<Request> viewDeclined() {
-		// TODO Auto-generated method stub
-		return reqDao.findAllByStatusWithDeclined();
+	public List<LoanDetailResponse> viewDeclined() {
+	    // Fetch all Request entities and handle potential null
+	    List<Request> listRequested = Optional.ofNullable(reqDao.findAll()).orElse(Collections.emptyList());
+	    
+	    // Filter for declined requests
+	    List<LoanDetailResponse> dto = listRequested.stream()
+	        .filter(req -> "DECLINED".equals(req.getStatus().name())) 
+	        .map(req -> {
+	            LoanDetailResponse response = new LoanDetailResponse(); 
+	            
+	            // Populate fields in LoanDetailResponse from Request object
+	            response.setAccountNo(req.getAccount().getAccountNo());
+	            response.setLoanAmount(req.getLoanAmount());
+	            response.setRequestId(req.getRequestId());
+	            response.setStatus(req.getStatus().name());
+	            
+	            response.setLoanName(req.getDetails().getLoanName()); 
+	            response.setTenure(req.getDetails().getTenure()); 
+	            
+	            // Handle collateral details
+	            List<Collateral> collaterals = req.getCollaterals(); 
+	            
+	            if (collaterals != null && !collaterals.isEmpty()) {
+	                Collateral firstCollateral = collaterals.get(0); 
+	                response.setAsset(firstCollateral.getAsset()); 
+	                response.setValue(firstCollateral.getValue()); 
+	            } else {
+	                response.setAsset("N/A"); 
+	                response.setValue("N/A");
+	            }
+	            
+	            return response; 
+	        })
+	        .collect(Collectors.toList());
+	    
+	    return dto;
 	}
 
 	@Override
@@ -281,7 +365,8 @@ public List<LoanDetailResponse> getListOfLoansByAccount(String accountNo) {
     } else {
         return List.of(); // Return an empty list instead of null
     }
-}@Override
+}
+@Override
 public List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo) {
     List<Request> requests = reqDao.findByAccountAccountNo(accountNo);
     
@@ -298,6 +383,62 @@ public List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo) {
         return dto;
     }).collect(Collectors.toList());
 }
+@Override
+public List<LoanDetailResponse> getAllRequests() {
+    List<Request> requests = reqDao.findAll();
+
+    List<String> accountNumbers = requests.stream()
+            .map(req -> req.getAccount().getAccountNo())
+            .distinct()
+            .collect(Collectors.toList());
+
+    List<Loan> loans = loanDao.findLoansByAccountNumbers(accountNumbers);
+
+    // Map loans to LoanDetailResponse and return
+    return loans.stream()
+            .map(loan -> {
+                LoanDetailResponse response = new LoanDetailResponse();
+                response.setLoanNo(loan.getLoanNo());
+                response.setLoanAmount(loan.getLoanAmount());
+                response.setRemainingAmount(loan.getRemainingAmount());
+                response.setEmi(loan.getEmi());
+                response.setStartDate(loan.getStartDate() != null ? loan.getStartDate().toString() : "N/A");
+                response.setEndDate(loan.getEndDate() != null ? loan.getEndDate().toString() : "N/A");
+                response.setLoanName(loan.getLoanDetails().getLoanName());
+
+                // Fetch associated request and account details
+                Optional<Request> associatedRequest = requests.stream()
+                        .filter(req -> req.getAccount().getAccountNo().equals(loan.getAccount().getAccountNo()))
+                        .findFirst();
+
+                if (associatedRequest.isPresent()) {
+                    Request request = associatedRequest.get();
+                    response.setRequestId(request.getRequestId());
+                    response.setStatus(request.getStatus().name());
+                    response.setAccountNo(request.getAccount() != null ? request.getAccount().getAccountNo() : "N/A");
+                    
+                    // Populate collateral details if available
+                    if (request.getCollaterals() != null && !request.getCollaterals().isEmpty()) {
+                        Collateral collateral = request.getCollaterals().get(0); // Assuming only one collateral for simplicity
+                        response.setAsset(collateral.getAsset());
+                        response.setValue(collateral.getValue());
+                    } else {
+                        response.setAsset("No Asset");
+                        response.setValue("No Asset");
+                    }
+                } else {
+                    response.setRequestId("N/A");
+                    response.setStatus("Unknown");
+                    response.setAccountNo("N/A");
+                    response.setAsset("No Asset");
+                    response.setValue("No Asset");
+                }
+
+                return response;
+            })
+            .collect(Collectors.toList());
+}
+
 
 
 

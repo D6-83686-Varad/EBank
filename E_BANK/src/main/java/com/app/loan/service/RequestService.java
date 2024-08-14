@@ -36,7 +36,7 @@ public interface RequestService {
      * 
      * @return A list of `Request` entities with a pending status.
      */
-	List<Request> viewPending();
+	List<LoanDetailResponse> viewPending();
 	
 	 /**
      * Retrieves a list of all requested loan requests.
@@ -45,7 +45,7 @@ public interface RequestService {
      * 
      * @return A list of all `Request` entities.
      */
-	List<Request> viewRequested();
+	List<RequestResponseDto> viewRequested();
 	
 	/**
      * Retrieves a list of approved loan requests.
@@ -63,7 +63,7 @@ public interface RequestService {
      * 
      * @return A list of `Request` entities with a declined status.
      */
-	List<Request> viewDeclined();
+	List<LoanDetailResponse> viewDeclined();
 	
 	/**
      * Updates the status of a loan request to pending.
@@ -100,5 +100,7 @@ public interface RequestService {
 	List<LoanDetailResponse> getListOfLoansByAccount(String accountNo);
 
 	List<RequestResponseDto> getAllRequestsByAccountNo(String accountNo);
+
+	List<LoanDetailResponse> getAllRequests();
 	
 }
