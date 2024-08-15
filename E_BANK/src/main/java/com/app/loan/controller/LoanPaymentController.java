@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,19 +19,21 @@ import com.app.loan.entities.Loan;
 import com.app.loan.service.LoanPaymentService;
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
-@RequestMapping("/loan/pay")
+@RequestMapping("/bank")
 public class LoanPaymentController {
 	
 	@Autowired
 	private LoanPaymentService loanPaymentService;
 	
 	
-	@PostMapping("/{loanId}")
+	@PostMapping("/user/addloanpayment/{loanId}")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
 	public ResponseEntity<?> addLoanPayment(@PathVariable("loanId") String loanId){
 		return ResponseEntity.ok(loanPaymentService.addPayment(loanId));
 	}
 	
-	@GetMapping("/{accountNo}")
+	@GetMapping("/user/getloandetailsbyacno/{accountNo}")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
 	public ResponseEntity<?> getLoanDetailsByAccountNo(@PathVariable String accountNo) {
 	    try {
 	        // Call service method to get a list of LoanResponseDto

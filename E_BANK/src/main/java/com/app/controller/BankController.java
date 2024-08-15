@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,7 +35,8 @@ public class BankController {
 	
 	private static final Logger logger = LogManager.getLogger(BankController.class);
 	
-	@PostMapping("/add")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+	@PostMapping("/superadmin/addBankDetails")
 	public ResponseEntity<?> addBanks(@RequestBody @Valid BankDTO bank)
 	{
 //		logger.info("Entered into Bank Add");

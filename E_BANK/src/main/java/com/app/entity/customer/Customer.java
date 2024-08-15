@@ -83,11 +83,12 @@ public class Customer extends BaseEntity {
 	    
 	    public void addAccountToCustomer(Account account)
 	    {
-	    	this.setAccount(account);
+	    	this.setAccount(account);	
 	    	account.setCustomer(this);
 	    }
 
-		public boolean verifyTpin(String inputTpin) {
-			 return this.tpin == inputTpin;
-		}
+	    public boolean verifyTpin(String inputTpin) {
+	        return this.tpin.equals(inputTpin);
+	    }
+	    
 }
