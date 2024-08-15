@@ -65,7 +65,7 @@ public class CustomerDTO {
     @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "PAN number must be valid")
     private String panNo;
     
-    @NotNull(message = "TOTP cannot be null")
+    @NotNull(message = "TPIN  cannot be null")
     private String tpin;
     
     @NotBlank
