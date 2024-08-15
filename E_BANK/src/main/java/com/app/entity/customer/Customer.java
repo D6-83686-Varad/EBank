@@ -54,7 +54,7 @@ public class Customer extends BaseEntity {
 	    private String email;
 	    @Column(length=10,nullable = false, unique = true)
 	    private String phoneNumber;
-	    @Column(length=300,nullable=false)
+	    @Column(nullable=false)
 		private String password;
 	    @Column(nullable = false)
 	    private LocalDate dateOfBirth;
@@ -73,7 +73,7 @@ public class Customer extends BaseEntity {
 	    @Column(nullable = false)
 	    private String accountType;
 	    
-	    @Column(length=300,nullable=false)
+	    @Column(nullable=false)
 		private String tpin;
 	    
 	    @OneToOne(mappedBy = "customer")
