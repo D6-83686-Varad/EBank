@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,7 +22,7 @@ import com.app.loan.entities.Request;
 import com.app.loan.service.RequestService;
 @CrossOrigin(origins = "http://localhost:3001/")
 @RestController
-@RequestMapping("/loan")
+@RequestMapping("/bank")
 public class LoanRequestController {
 	@Autowired 
 	private RequestService reqService;
@@ -40,7 +41,8 @@ public class LoanRequestController {
 	 * 
 	 * @return A `ResponseEntity` containing the list of requested loan requests or HTTP status 204 if no content.
 	 */
-	@GetMapping("/requested")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallloanrequested")
 	public ResponseEntity<?> getAllRequestedAccount()
 	{
 		System.out.println("Hii");
@@ -61,7 +63,8 @@ public class LoanRequestController {
 	 * 
 	 * @return A `ResponseEntity` containing the list of pending loan requests or HTTP status 204 if no content.
 	 */
-	@GetMapping("/pending")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallloanpending")
 	public ResponseEntity<?> getAllPendingAccount()
 	{
 		List<LoanDetailResponse> accList =reqService.viewPending();
@@ -81,7 +84,8 @@ public class LoanRequestController {
 	 * 
 	 * @return A `ResponseEntity` containing the list of approved loan requests or HTTP status 204 if no content.
 	 */
-	@GetMapping("/approved")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallloanapproved")
 	public ResponseEntity<?> getAllApprovedAccount()
 	{
 		List<Request> accList =reqService.viewApproved();
@@ -101,7 +105,8 @@ public class LoanRequestController {
 	 * 
 	 * @return A `ResponseEntity` containing the list of declined loan requests or HTTP status 204 if no content.
 	 */
-	@GetMapping("/declined")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallloandeclined")
 	public ResponseEntity<?> getAllDeclinedAccount()
 	{
 		List<LoanDetailResponse> accList =reqService.viewDeclined();
@@ -122,7 +127,8 @@ public class LoanRequestController {
 	 * @param id The ID of the loan request to update.
 	 * @return A `ResponseEntity` with the result of the update operation.
 	 */
-	@PatchMapping("/pending/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/pending/{id}")
 	public ResponseEntity<?> updateToPending(@PathVariable("id") String id){
 		return ResponseEntity.ok(reqService.updateToPending(id));
 	}
@@ -137,7 +143,8 @@ public class LoanRequestController {
 	 * @param id The ID of the loan request to update.
 	 * @return A `ResponseEntity` with the result of the update operation.
 	 */
-	@PatchMapping("/approved/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/approved/{id}")
 	public ResponseEntity<?> updateToApproved(@PathVariable("id") String id){
 		return ResponseEntity.ok(reqService.updateToApproved(id));
 	}
@@ -152,7 +159,8 @@ public class LoanRequestController {
 	 * @param id The ID of the loan request to update.
 	 * @return A `ResponseEntity` with the result of the update operation.
 	 */
-	@PatchMapping("/declined/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/declined/{id}")
 	public ResponseEntity<?> updateToDeclined(@PathVariable("id") String id){
 		return ResponseEntity.ok(reqService.updateToDeclined(id));
 	}
@@ -171,7 +179,8 @@ public class LoanRequestController {
 	 * @param requestDto The `RequestDto` object containing details of the loan request to be added.
 	 * @return A `ResponseEntity` containing the response from the service and HTTP status 201 (Created).
 	 */
-	@PostMapping("/add")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
+	@PostMapping("/user/addloanrequest")
 	public ResponseEntity<?> addLoanRequest(@RequestBody RequestDto requestDto){
 		System.out.println("Hii in controller");
 		System.out.println(requestDto.toString());
@@ -179,21 +188,22 @@ public class LoanRequestController {
 		
 	}
 	
-	
-	@GetMapping("/listOfRequest/{id}")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
+	@GetMapping("/user/listOfRequest/{id}")
 	public ResponseEntity<?> getListOfLoansByAccountId(@PathVariable("id") String id){
 		
 		return ResponseEntity.ok(reqService.getListOfLoansByAccount(id));
 	}
 	
-	
-	@GetMapping("/account/{accountNo}")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
+	@GetMapping("/user/getloanrequestsbyacno/{accountNo}")
     public ResponseEntity<List<RequestResponseDto>> getRequestsByAccountNo(@PathVariable String accountNo) {
         List<RequestResponseDto> requests = reqService.getAllRequestsByAccountNo(accountNo);
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 	
-	 @GetMapping("/details")
+	@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallloandetails")
 	    public List<LoanDetailResponse> getAllLoanDetails() {
 	        return reqService.getAllRequests();
 	    }

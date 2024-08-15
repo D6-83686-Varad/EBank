@@ -4,6 +4,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.dto.PaymentDTO;
@@ -11,13 +12,14 @@ import com.app.exceptions.ResourceNotFoundException;
 import com.app.service.PaymentService;
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/bank")
 public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
 
-    @PostMapping("/within-bank")
+    @PostMapping("/user/payment/within-bank")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
     public ResponseEntity<String> paymentWithinBank(@RequestBody PaymentDTO paymentDTO) {
         try {
             boolean result = paymentService.paymentWithinBank(paymentDTO);
@@ -35,7 +37,8 @@ public class PaymentController {
         }
     }
     
-    @PostMapping("/outside-bank")
+    @PostMapping("/user/payment/outside-bank")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
     public ResponseEntity<String> paymentOutsideBank(@RequestBody PaymentDTO paymentDTO) {
         try {
             boolean result = paymentService.paymentOutsideBank(paymentDTO);

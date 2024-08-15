@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import com.app.service.BankService;
 import com.app.service.CustomerService;
 @CrossOrigin(origins ="http://localhost:3000/")
 @RestController
-@RequestMapping("/superAdmin")
+@RequestMapping("/bank")
 @Validated
 public class SuperAdminController {
 
@@ -31,14 +32,16 @@ public class SuperAdminController {
 	
 	@Autowired
 	private BankService bankService;
-	
-	@GetMapping("/admins")
+
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+	@GetMapping("/superadmin/getalladmins")
     public ResponseEntity<List<CustomerReturnDTO>> getAllAdmins() {
         List<CustomerReturnDTO> admins = customerService.getAllAdmins();
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
 	
-	@PutMapping("/updateAdmin/{id}")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+	@PutMapping("/superadmin/updateAdmin/{id}")
     public ResponseEntity<String> createAdmin(@PathVariable("id") Long id) {
         Customer customer = customerService.getCustomer(id);
         if (Role.ROLE_SUPER_ADMIN.equals(customer.getRole())) {
@@ -48,7 +51,8 @@ public class SuperAdminController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
     
-    @PutMapping("/deleteAdmin/{id}")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+    @PutMapping("/superadmin/deleteAdmin/{id}")
     public ResponseEntity<String> deleteAdmin(@PathVariable("id") Long id) {
         Customer customer = customerService.getCustomer(id);
         if (Role.ROLE_ADMIN.equals(customer.getRole())) {
@@ -58,25 +62,29 @@ public class SuperAdminController {
         throw new BadRequestException("Not Found");
     }
     
-    @GetMapping("/getAllCustomers")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+    @GetMapping("/superadmin/getAllCustomers")
     public ResponseEntity<List<CustomerReturnDTO>> getAllCustomers() {
         List<CustomerReturnDTO> customers = customerService.getAllCustomers();
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     
-    @GetMapping("/getAllCustomersOnly")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+    @GetMapping("/superadmin/getAllCustomersOnly")
     public ResponseEntity<List<CustomerReturnDTO>> getAllCustomersOnly() {
         List<CustomerReturnDTO> customers = customerService.getAllCustomersOnly();
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     
-    @GetMapping("/getAllCustomersDisabled")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+    @GetMapping("/superadmin/getAllCustomersDisabled")
     public ResponseEntity<List<CustomerReturnDTO>> getAllDisabled() {
         List<CustomerReturnDTO> customers = customerService.getAllDisabled();
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
     
-    @GetMapping("/getBankDetails")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+    @GetMapping("/superadmin/getBankDetails")
 	public ResponseEntity<?> getBank(){
 		return ResponseEntity.status(HttpStatus.OK).body(bankService.getBankDetails());
 	}

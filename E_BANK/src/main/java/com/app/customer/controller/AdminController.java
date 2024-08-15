@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ import com.app.service.AccountTypeService;
 import com.app.service.CustomerService;
 @CrossOrigin(origins ="http://localhost:3000/")
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/bank")
 @Validated
 public class AdminController {
 
@@ -44,18 +45,21 @@ public class AdminController {
 	@Autowired
 	private AccountSevice accService;
 
-	@PostMapping("/add")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+	@PostMapping("/superadmin/add")
 	public ResponseEntity<?> addAccountType(@RequestBody @Valid AccountTypeDTO accDTO) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(accTypeService.addAccType(accDTO));
 	}
 
-	@PatchMapping("{accType}/update")
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+	@PatchMapping("/superadmin/update/{accType}")
 	public ResponseEntity<?> updateAccountType(@PathVariable("accType") String accType,
 			@RequestBody @Valid float interestRate) {
 		return ResponseEntity.ok(accTypeService.updateAccountType(accType, interestRate));
 	}
 
-	@GetMapping("/actiavted")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/actiavted")
 	public ResponseEntity<?> getAllActivatedAccounts() {
 		
 		try {
@@ -69,7 +73,8 @@ public class AdminController {
 		
 	}
 
-	@GetMapping("/deactivated")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/deactivated")
 	public ResponseEntity<?> getAllDeactivatedAccounts() {
 		
 		try {
@@ -83,7 +88,8 @@ public class AdminController {
 		}
 	}
 
-	@GetMapping("/suspended")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/suspended")
 	public ResponseEntity<?> getAllSuspendedAccounts() {
 		
 		try {
@@ -98,38 +104,43 @@ public class AdminController {
 		
 	}
 
-	@PatchMapping("/updateStatusActivated/{accId}")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/updateStatusActivated/{accId}")
 	public ResponseEntity<?> changeToActivate(@PathVariable("accId") String accId) {
 		return ResponseEntity.ok(accService.changeStatusOfActivatedAccount(accId));
 	}
 
-	@PatchMapping("/updateStatusDeactivated/{accId}")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/updateStatusDeactivated/{accId}")
 	public ResponseEntity<?> changeToDeactivate(@PathVariable("accId") String accId) {
 		return ResponseEntity.ok(accService.changeStatusOfDeactivatedAccount(accId));
 	}
-    
-    @GetMapping("/admins")
+
+	@PreAuthorize("hasRole( 'SUPER_ADMIN')")
+    @GetMapping("/superadmin/admins")
     public ResponseEntity<List<CustomerReturnDTO>> getAllAdmins() {
         List<CustomerReturnDTO> admins = customerService.getAllAdmins();
         return new ResponseEntity<>(admins, HttpStatus.OK);
     }
-    
-    @GetMapping("/status/false")
+
+    @PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+    @GetMapping("/admin/getallwithstatusfalse")
     public ResponseEntity<List<CustomerReturnDTO>> getCustomersWithStatusFalse() {
         List<CustomerReturnDTO> customers = customerService.getCustomersWithStatusFalse();
         return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+    @PatchMapping("/admin/changestatustotrue/{id}")
     public ResponseEntity<String> setCustomerStatusToTrue(@PathVariable Long id) {
         String response = customerService.setCustomerStatusToTrue(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
-      LoginResponseDTO loginResponse = customerService.login(loginRequest.getEmailOrPhone(), loginRequest.getPassword());
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+//      LoginResponseDTO loginResponse = customerService.login(loginRequest.getEmailOrPhone(), loginRequest.getPassword());
+//        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+//    }
 
 }

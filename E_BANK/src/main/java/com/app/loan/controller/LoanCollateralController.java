@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ import com.app.loan.dto.CollateralDto;
 import com.app.loan.service.CollateralService;
 @CrossOrigin(origins = "http://localhost:3001/")
 @RestController
-@RequestMapping("/loan/collateral")
+@RequestMapping("/bank")
 public class LoanCollateralController {
 	@Autowired
 	private CollateralService collService;
@@ -30,7 +31,8 @@ public class LoanCollateralController {
      * @param collateral The `CollateralDto` object containing details of the collateral to be added.
      * @return A `ResponseEntity` containing the response from the service and HTTP status 201 (Created).
      */
-	@PostMapping("/add")
+	@PostMapping("/user/collateral/add")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
 	public ResponseEntity<?> addCollateralRequest(@RequestBody CollateralDto collateral){
         // Call the service layer to add the collateral and return the result
 		return ResponseEntity.status(HttpStatus.CREATED).body(collService.addCollateral(collateral));

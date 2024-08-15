@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import com.app.loan.dto.LoanDetailsDto;
 import com.app.loan.service.LoanDetailsService;
 @CrossOrigin(origins = "http://localhost:3001/")
 @RestController
-@RequestMapping("/loantypes")
+@RequestMapping("/bank")
 public class LoanDetailsController {
 	
 	@Autowired
@@ -34,7 +35,8 @@ public class LoanDetailsController {
 	 * @param loDeDto The `LoanDetailsDto` object containing details of the loan type to be added.
 	 * @return A `ResponseEntity` containing the response from the service and HTTP status 201 (Created).
 	 */
-	@PostMapping("/add")
+	@PostMapping("/superadmin/loantype/add")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<?> addLoanTypeDetails(@RequestBody LoanDetailsDto loDeDto){
 		return ResponseEntity.status(HttpStatus.CREATED).body(loDeService.addNewLoanDetails(loDeDto));
 	}
@@ -50,13 +52,15 @@ public class LoanDetailsController {
 	 * @param id The ID of the loan type to be removed.
 	 * @return A `ResponseEntity` containing the response from the service and HTTP status 201 (Created).
 	 */
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/superadmin/deleteloantype/{id}")
+	@PreAuthorize("hasRole('SUPER_ADMIN')")
 	public ResponseEntity<?> removeLoanType(@PathVariable("id") String id){
 		return ResponseEntity.status(HttpStatus.CREATED).body(loDeService.removeLoanDretails(id));
 	}
 	
 	
-	@GetMapping("/getAllLoansByLoanName/{loanName}")
+	@GetMapping("/user/getloantypes/{loanName}")
+	@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'DISABLED')")
 	public ResponseEntity<?> getLoansByLoanName(@PathVariable("loanName")String loanName){
 		return ResponseEntity.status(HttpStatus.CREATED).body(loDeService.getAllLoansByLoanName(loanName));	
 	}

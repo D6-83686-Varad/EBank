@@ -196,6 +196,26 @@ public class CustomerServiceImpl implements CustomerService {
         return loginResponseDTO;
     }
 
+    @Override
+    public LoginResponseDTO getCustmoerDetail(String emailOrPhone) {
+        Optional<Customer> customerOpt = customerDao.findByEmail(emailOrPhone);
+        if (!customerOpt.isPresent()) {
+            customerOpt = customerDao.findByPhoneNumber(emailOrPhone);
+        }
+        Customer customer = customerOpt.orElseThrow(() -> new ResourceNotFoundException("Invalid email/phone number"));
+        Account account = customer.getAccount();
+        if (account != null) {
+            boolean isAccountActive = accountService.checkAccountSuspension(account);
+            if (!isAccountActive) {
+                throw new ResourceNotFoundException("Account is suspended due to inactivity.");
+            }
+        }
+        LoginResponseDTO loginResponseDTO = mapper.map(customer, LoginResponseDTO.class);
+        loginResponseDTO.setAccountNo(account.getAccountNo());
+
+        return loginResponseDTO;
+    }
+    
     /**
      * Creates an admin role for a customer.
      *
@@ -237,7 +257,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Override
     public void verifyCustomerTpin(Long customerId, String inputTpin) {
-        Customer customer = customerDao.findById(customerId)
+    	Customer customer = customerDao.findById(customerId)
             .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
         boolean verification = (customer.getTpin().equals(inputTpin));
         if(!verification)

@@ -24,5 +24,6 @@ public class LoginResponseDTO {
     private String phoneNumber;
     
     private String accountNo;
-        
+     
+    private String jwtToken;
 }

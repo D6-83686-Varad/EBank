@@ -39,4 +39,6 @@ public interface CustomerService {
 
 	List<CustomerReturnDTO> getAllCustomersOnly();
 
+	LoginResponseDTO getCustmoerDetail(String emailOrPhone);
+
 }

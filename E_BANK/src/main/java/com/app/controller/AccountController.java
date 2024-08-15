@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,7 +23,7 @@ import com.app.service.AccountSevice;
 import com.app.service.CustomerService;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/bank")
 @CrossOrigin(origins = "http://localhost:3000/")
 public class AccountController {
 	
@@ -33,7 +34,8 @@ public class AccountController {
 	private CustomerService customerService;
 	
 
-	@GetMapping("/actiavted")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallaccountsactiavted")
 	public ResponseEntity<?> getAllActivatedAccounts()
 	{
 		List<Account> activatedAccounts =accService.getAllActivatedAccount();
@@ -44,7 +46,8 @@ public class AccountController {
 		return ResponseEntity.ok(activatedAccounts);
 	}
 	
-	@GetMapping("/deactivated")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallaccountsdeactivated")
 	public ResponseEntity<?> getAllDeactivatedAccounts()
 	{
 		List<Account> deactivatedAccounts =accService.getAllDeactivatedAccount();
@@ -55,7 +58,8 @@ public class AccountController {
 		return ResponseEntity.ok(deactivatedAccounts);
 	}
 	
-	@GetMapping("/suspended")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@GetMapping("/admin/getallaccountssuspended")
 	public ResponseEntity<?> getAllSuspendedAccounts()
 	{
 		List<Account> suspendedAccounts =accService.getAllSuspendedAccount();
@@ -66,42 +70,45 @@ public class AccountController {
 		return ResponseEntity.ok(suspendedAccounts);
 	}
 	
-	@PatchMapping("/updateStatusA/{accId}")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/updateStatusA/{accId}")
 	public ResponseEntity<?> changeToActivate(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfActivatedAccount(accId));
 	}
 	
-	@PatchMapping("/updateStatusS/{accId}")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/updateStatusS/{accId}")
 	public ResponseEntity<?> changeToActivateSuspended(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfSuspendedAccount(accId));
 	}  
 	
-	@PatchMapping("/updateStatusD/{accId}")
+	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
+	@PatchMapping("/admin/updateStatusD/{accId}")
 	public ResponseEntity<?> changeToDeactivate(@PathVariable("accId")String accId)
 	{
 		return ResponseEntity.ok(accService.changeStatusOfDeactivatedAccount(accId));
 	}
 	
-	@GetMapping("/balance/{accId}")
-	public ResponseEntity<?> getBalance(@PathVariable("accId")String accId)
-	{
-		return ResponseEntity.ok(accService.checkBalance(accId));
-				
-	}
+//	@GetMapping("/user/balance/{accId}")
+//	public ResponseEntity<?> getBalance(@PathVariable("accId")String accId)
+//	{
+//		return ResponseEntity.ok(accService.checkBalance(accId));
+//				
+//	}
 	
-	@PostMapping("/verify-tpin/{customerId}")
-	 public ResponseEntity<String> verifyTpin(@PathVariable Long customerId, @RequestBody String tpin) {
-	        try {
-	            customerService.verifyCustomerTpin(customerId, tpin);
-	            return new ResponseEntity<>("TPIN verified successfully", HttpStatus.OK);
-	        } catch (ResourceNotFoundException e) {
-	            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-	        } catch (InvalidTpinException e) {
-	            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-	        }
-	    }
+//	@PostMapping("/user/verify-tpin/{customerId}")
+//	 public ResponseEntity<String> verifyTpin(@PathVariable Long customerId, @RequestBody String tpin) {
+//	        try {
+//	            customerService.verifyCustomerTpin(customerId, tpin);
+//	            return new ResponseEntity<>("TPIN verified successfully", HttpStatus.OK);
+//	        } catch (ResourceNotFoundException e) {
+//	            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//	        } catch (InvalidTpinException e) {
+//	            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//	        }
+//	    }
 	
 
 }
