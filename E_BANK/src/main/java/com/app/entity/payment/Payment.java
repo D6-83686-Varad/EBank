@@ -64,6 +64,9 @@ public class Payment {
 	@Column(name="receive_acc_No")
 	private String reciverAccountNo;
 	
+	@Column(name="sender_acc_No_Out")
+	private String senderAccountNo;
+	
 	private String IFSCCode="BANK_00001";
 	
 	@Column

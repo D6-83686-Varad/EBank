@@ -53,5 +53,23 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the payment.");
         }
     }
+    @PostMapping("/admin/deposit")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<String> depositAmountCustomer(@RequestBody PaymentDTO paymentDTO) {
+        try {
+            boolean isDeposited = paymentService.depositAmountCustomer(paymentDTO);
+            if (isDeposited) {
+                return ResponseEntity.ok("Payment deposited successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to deposit payment");
+            }
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the payment");
+        }
+    }
 }
 

@@ -1,5 +1,7 @@
 package com.app.service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -155,9 +157,12 @@ public class CustomerServiceImpl implements CustomerService {
     public String setCustomerStatusToTrue(Long customerId) {
         Customer customer = customerDao.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
-        
         customer.setStatus(true);
         Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Bank not found"));
+        LocalDate currentDate = LocalDate.now();
+        Period age = Period.between(customer.getDateOfBirth(), currentDate);
+        if(age.getYears()< 18)
+        	customer.setAccountType("MINOR");
         Account account = accountService.addAccount(customer, bank, customer.getAccountType());
         customerDao.save(customer);
         return "Customer status updated to true!";

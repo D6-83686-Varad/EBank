@@ -197,6 +197,7 @@ public class Account extends BaseEntity {
 		senderTransHistory.setAmount(pay.getAmount());
 		senderTransHistory.setBalance(this.getBalance());
 		senderTransHistory.setStatus(transStatus);
+		senderTransHistory.setSenderAccountNo(pay.getSenderAccountNo());
 		senderTransHistory.setReceiverAccountNo(pay.getReceiverAccountNo());;
 		this.getTransactionHistories().add(senderTransHistory);
 		senderTransHistory.setAccount(this);
@@ -226,6 +227,20 @@ public class Account extends BaseEntity {
         transactionHistory.setReceiverAccountNo(this.getAccountNo());
         transactionHistory.setAccount(this);
        // this.getTransactionHistories().add(transactionHistory);
+	}
+
+	public void addTransaction(Payment payment, TransactionHistory receiverTransactionHistory, PaymentDTO payments,
+			String success, TransType credit, Account receiverAccount) {
+		receiverTransactionHistory.setDescription(payments.getDescription());
+		receiverTransactionHistory.setTransactionType(credit);
+		receiverTransactionHistory.setAmount(payments.getAmount());
+		receiverTransactionHistory.setBalance(receiverAccount.getBalance());
+		receiverTransactionHistory.setStatus(success);
+		receiverTransactionHistory.setReceiverAccountNo(payments.getReceiverAccountNo());;
+		this.getTransactionHistories().add(receiverTransactionHistory);
+		receiverTransactionHistory.setAccount(receiverAccount);
+		payment.getTransactionHistories().add(receiverTransactionHistory);
+		receiverTransactionHistory.setPayment(payment);
 	}
 
 	

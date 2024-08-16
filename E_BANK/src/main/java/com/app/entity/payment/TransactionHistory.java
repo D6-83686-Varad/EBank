@@ -66,6 +66,7 @@ public class TransactionHistory  {
 	 private LocalDateTime createdOn;
 	
 	private String receiverAccountNo;
+	private String senderAccountNo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")
