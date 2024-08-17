@@ -54,6 +54,9 @@ public class TransactionHistoryController {
             if (transactionHistories.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
+            for (TransactionHistoryDTO transactionHistoryDTO : transactionHistories) {
+				System.out.println(transactionHistoryDTO.toString());
+			}
             return new ResponseEntity<>(transactionHistories, HttpStatus.OK);
         } catch (Exception e) {
             // Log the exception (e.g., logger.error("Failed to get all transaction histories", e))

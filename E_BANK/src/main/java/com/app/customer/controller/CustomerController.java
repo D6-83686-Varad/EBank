@@ -183,7 +183,7 @@ public class CustomerController {
             LoginResponseDTO loginResponse = customerService.getCustmoerDetail(loginRequest.getEmailOrPhone());
            // LoginResponseDTO  loginResponse = new LoginResponseDTO();
             loginResponse.setJwtToken(jwtToken);
-
+            System.out.println(loginResponse.getJwtToken());
             // Return the response entity with OK status
             return new ResponseEntity<>(loginResponse, HttpStatus.OK);
 

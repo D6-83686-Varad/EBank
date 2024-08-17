@@ -58,7 +58,7 @@ public class Request extends BaseEntity{
 		        )
 	@Column(name="request_id")
 	private String requestId;
-	
+
 	
     /**
      * The amount of money requested in the loan request.
@@ -73,6 +73,7 @@ public class Request extends BaseEntity{
 	@Column(name="loan_duration")
 	private int loanDuration;
 
+	
 	
 	/**
      * The status of the loan request.

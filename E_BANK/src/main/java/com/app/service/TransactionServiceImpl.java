@@ -39,27 +39,32 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionHistoryDTO> getAllTransactionHistories() {
         List<TransactionHistory> histories = transactionHistoryDao.findAll();
+        
         return histories.stream()
                         .map(history -> {
                             // Map TransactionHistory to TransactionHistoryDTO
                             TransactionHistoryDTO dto = mapper.map(history, TransactionHistoryDTO.class);
-
+                           
                             // Fetch and set additional details
                             Account account = history.getAccount(); 
                             if (account != null) {
                                 dto.setAccountId(account.getAccountNo()); 
+                                System.out.println(account.getAccountNo());
+                                
                             }
 
                             Payment payment = history.getPayment(); 
                             if (payment != null) {
                                 dto.setPaymentId(payment.getRefId()); 
+                                System.out.println(payment.getRefId());
                             }
 
                             LoanPayment loanPayment = history.getLoanPayment(); 
                             if (loanPayment != null) {
-                               dto.setPayment_id(loanPayment.getPayment_id()); 
+                               dto.setPaymentId(loanPayment.getPayment_id()); 
+                          
                             }
-
+                           
                             return dto;
                         })
                         .collect(Collectors.toList());

@@ -11,4 +11,5 @@ public interface PaymentService {
 	boolean paymentOutsideBank(PaymentDTO payments) throws BadRequestException;
 	String paymentEMI(PaymentDTO payments);
 	String paymentLoan(PaymentDTO payments);
+	boolean depositAmountCustomer(PaymentDTO payments) throws BadRequestException;
 }

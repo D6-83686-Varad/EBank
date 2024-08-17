@@ -165,6 +165,7 @@ public class PaymentServiceImpl implements PaymentService {
 	      //Transaction History for sender
 	        TransactionHistory senderTransactionHistory = new TransactionHistory();
 	        senderAccount.addTransaction(payment, senderTransactionHistory, payments,"PENDING");
+	        senderTransactionHistory.setSenderAccountNo(payments.getSenderAccountNo());
 
 	        // Interact with the external bank to deposit the amount
 
@@ -195,6 +196,82 @@ public class PaymentServiceImpl implements PaymentService {
 	    }
 	}
 
+
+	@Override
+	public boolean depositAmountCustomer(PaymentDTO payments) throws BadRequestException {
+	    try {
+	    	String senderAccountNo = payments.getSenderAccountNo();
+	        // Retrieve bank details
+	        Bank bank = bankDao.getBankDetails().orElseThrow(() -> new ResourceNotFoundException("Invalid bank details"));
+	        // Map PaymentDTO to Payment entity
+	        Payment payment = mapper.map(payments, Payment.class);
+	        
+	        payment.setSenderAccountNo(senderAccountNo);
+	        
+	        // Retrieve sender account
+	        Account receiverAccount = accDao.findById(payments.getReceiverAccountNo())
+	            .orElseThrow(() -> new ResourceNotFoundException("Invalid sender account"));
+
+	        // Validate sender account status
+	        if (receiverAccount.getStatus() == AccountStatus.SUSPENDED || receiverAccount.getStatus() == AccountStatus.DEACTIVATED) {
+	            throw new BadRequestException("Invalid Request: Sender account is deactivated or suspended");
+	        }
+
+	        double amount = payments.getAmount();
+
+	        // Check sender's balance
+	      
+
+	        // Apply fee if the payment amount exceeds the limit
+	        if (amount > 200000) {
+	            double fee = amount * 0.0005;
+	            receiverAccount.deposit(fee);;
+	            bank.addFundAvailable(fee);
+	        }
+
+	        // Perform the transfer within the bank
+	        receiverAccount.deposit(amount);
+	       
+	        bank.addFundAvailable(amount);
+	       
+	        
+	        payment.setStatus(false);
+	        
+	      //Transaction History for sender
+	        TransactionHistory receiverTransactionHistory = new TransactionHistory();
+	        receiverAccount.addTransaction(payment, receiverTransactionHistory, payments,"SUCESS",TransType.CREDIT,receiverAccount);
+	        receiverTransactionHistory.setSenderAccountNo(senderAccountNo);
+	        payment.setReciverAccountNo(payments.getReceiverAccountNo());
+
+
+	        // Interact with the external bank to deposit the amount
+
+
+	        // Save payment details
+	        receiverAccount.addPayment(payment); // External bank, no receiver account within our system
+	        payDao.save(payment);
+	        // Save bank details
+	        bankDao.save(bank);
+	        // Save updated sender account
+	        accDao.save(receiverAccount);
+	        transDao.save(receiverTransactionHistory);
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        return true;
+
+	    } catch (Exception e) {
+	        // Log the exception and throw a custom error if needed
+	        e.printStackTrace();
+	        throw new RuntimeException("An error occurred while processing the payment", e);
+	    }
+	}
 
 
 
