@@ -31,9 +31,6 @@ public class AccountSeviceImpl implements AccountSevice {
     private AccountDao accountDao;
     
     @Autowired
-    private BankDao bankDao;
-    
-    @Autowired
     private AccountTypeDao accountTypeDao;
     
     @Autowired
@@ -47,6 +44,7 @@ public class AccountSeviceImpl implements AccountSevice {
      * @param accType the type of the account to be created
      * @return the created account
      */
+    
     @Override
     public Account addAccount(Customer customer, Bank bank, String accType) {
         AccountType accountType = accountTypeDao.findByAccTypeName(accType)

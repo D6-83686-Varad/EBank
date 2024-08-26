@@ -29,10 +29,7 @@ public class AccountController {
 	
 	@Autowired
 	private AccountSevice accService;
-	
-	@Autowired
-	private CustomerService customerService;
-	
+
 
 	@PreAuthorize("hasAnyRole( 'ADMIN', 'SUPER_ADMIN')")
 	@GetMapping("/admin/getallaccountsactiavted")
